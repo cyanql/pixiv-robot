@@ -1,7 +1,8 @@
 # PixivSpider
 * Library: `electron` + `vue` + `vue-router` + `vuex`
 * Bundler: `webpack` + `babel`
-* Language: `es2015` + `stage-0`(async/await)
+* Language: `es2015` + `stage-0`(async/await、spread)
+* Test: `mocha` + `chai` + `sinon` + `istanbul`
 
 
 ## Function

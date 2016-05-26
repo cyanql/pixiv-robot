@@ -1,47 +1,37 @@
-import fetch from 'isomorphic-fetch'
 import fs from 'app/lib/promise-fs'
-import ProxyAgent from 'https-proxy-agent'
 
 export default
-class User {
-	constructor({username, password, proxy}) {
+class UserInfo {
+	constructor(option) {
 		Object.assign(this, {
-			_username: username,
-			_password: password,
-			_proxy: proxy || '',
-			_cookie: ''
+			username: '',
+			password: '',
+			cookie: '',
+			proxy: '',
+			downloadPath: '',
+			...option
 		})
 	}
-	async login() {
-		let res
-		try {
-			res = await fetch('https://www.pixiv.net/login.php', {
-				method: 'POST',
-				mode: 'no-cors',
-				redirect: 'manual',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				// agent: new ProxyAgent(this._proxy),
-				body: `mode=login&pixiv_id=${this._username}&pass=${this._password}&skip=1`
-			})
-		} catch (err) {
-			return console.error(`登陆失败:\n${err}`)
-		}
-		//	fs.writeFile('./log/pixiv_headers.json', JSON.stringify(res))
-
-		this.set('cookie', res.headers.getAll('set-cookie').map(v => v.split(';')[0]).join(';'))
-	}
 	set(prop, value) {
-		if (value === undefined) throw new Error('arguments\' length should be 2')
+		if (value === undefined)
+			throw new Error('value should not be undefined')
+		if (!(prop in this))
+			throw new Error(`'${prop}' is not allowed to set, you should create it when init`)
+
 		this[`_${prop}`] = value
 	}
 	get(prop) {
+		if (!(prop in this))
+			throw new Error(`'${prop}' is not allowed to get, you should create it when init`)
+
 		return this[`_${prop}`]
 	}
-	async saveToLocal() {
+	delete(prop) {
+		delete this[`_${prop}`]
+	}
+	async saveToLocal(pathname) {
 		try {
-			await fs.writeFile(this.name, JSON.stringify(this))
+			await fs.writeFile(pathname, JSON.stringify(this))
 		} catch (err) {
 			throw new Error(`saveToLocal fail:\n${err}`)
 		}

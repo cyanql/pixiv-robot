@@ -24,9 +24,9 @@ router.map({
 	'/setting': {
 		name: 'setting',
 		component: Setting
+
 	}
 })
-
 
 router.beforeEach(({to, next, redirect}) => {
 	global.to = to

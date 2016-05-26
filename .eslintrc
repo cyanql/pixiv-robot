@@ -1,21 +1,24 @@
-module.exports = {
+{
+    "globals": {
+        "expect": true,
+        "sinon": true
+    },
     "env": {
         "node": true,
         "mocha": true,
+        "browser": true,
         "es6": true
     },
     "extends": "eslint:recommended",
+    "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaFeatures": {
-            "experimentalObjectRestSpread": true
-        },
         "sourceType": "module"
     },
     "rules": {
         "quotes": ["error", "single"],
-        "semi": ["error", "always"],
-        "no-console": 0, 
+        "no-console": 0,
         "no-unused-vars": 1,
+        "no-unused-expressions": 0,
         "consistent-return": 0
     }
-};
+}

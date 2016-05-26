@@ -3,11 +3,11 @@
 	<div class="option">
 		<div class="logo"></div>
 		<div class="form">
-			<input class="user" @input="changeUserName" :value="info.username" placeholder="username">
+			<input class="user" type="text" @input="changeUserName" :value="info.username" placeholder="username">
 			<input class="pass" type="password" @input="changePassWord" :value="info.password" placeholder="password">
-            <input @input="changeProxy" :value="option.proxy" placeholder="代理（选填，仅支持http/https）">
+            <input type="text" @input="changeProxy" :value="option.proxy" placeholder="代理（选填）">
 		</div>
-		<a v-link="'option'" class="btn submit" @click="login">登陆</a>
+		<a v-link="'setting'" class="btn submit" @click="login">登陆</a>
 	</div>
 </template>
 
@@ -21,7 +21,7 @@ export default {
 	vuex: {
 		getters: {
 			info: state => state.info,
-			option: state => state.option
+			option: state => state.option.proxy
 		},
 		actions
 	}

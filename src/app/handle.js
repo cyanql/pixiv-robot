@@ -93,6 +93,14 @@ async function download(pathname, picList, option) {
 	//
 }
 
+export function thumbnailToOriginal(picList) {
+	return picList.map((v) => {
+		//循环1000000次，直接替换约为0.26s-0.32s,正则替换约为0.18s~0.2s
+		//v.src.replace('c/150x150/img-master','img-original').replace('_master1200','')
+		v.src = v.src.replace(/c.*img-master/, 'img-original').replace(/(_p\d+)_.*(\..*)$/, '$1$2')
+		return v
+	})
+}
 
 export const getPictureSrcFromLocal = async () => {
 
