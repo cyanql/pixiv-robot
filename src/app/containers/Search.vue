@@ -1,8 +1,8 @@
 <template>
 	<div class="search clear-fix">
 		<div class="btn-group clear-fix">
-			<a class="btn" @click="search">查找</a>
-			<a class="btn" @click="download">下载</a>
+			<a class="btn" @click="searchAsync">查找</a>
+			<a class="btn" @click="downloadAsync">下载</a>
 		</div>
 		<div class="content clear-fix">
 			<label>作者ID</label>

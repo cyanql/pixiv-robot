@@ -29,8 +29,7 @@ router.map({
 })
 
 router.beforeEach(({to, next, redirect}) => {
-	global.to = to
-	//除login页外，处于未登录状态时跳转login页
+	//除login外，处于未登录状态时跳login
 	if (to.name !== 'login' && !to.auth) {
 		redirect('login')
 	} else {

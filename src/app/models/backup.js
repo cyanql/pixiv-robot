@@ -34,7 +34,7 @@ class Collection {
 		}
 	}
 	//查找图片
-	async queryPictureAll() {
+	async queryPictureAsyncAll() {
 		let text
 		try {
 			text = await this.requestHTML(this._url)
@@ -64,7 +64,7 @@ class Collection {
 		const nextpage = $('span.next a').attr('href')
 		if (nextpage) {
 			this._url = this._url.split('?')[0] + nextpage
-			await this.queryPictureAll()
+			await this.queryPictureAsyncAll()
 		} else {
 			await this.multipleToPicture()
 		}
@@ -101,11 +101,11 @@ class Collection {
 		url: 'http://www.pixiv.net/member_illust.php?id=45438',
 		proxy: 'http://127.0.0.1:8787',
 		authorId: '',
-		outpath: '/download'
+		outpath: '/downloadAsync'
 	}
 	console.log('begin')
 	const collection = new Collection({...config, cookie: 'PHPSESSID=10419852_c6f2fe646ddfd1679be413d8b4e40f19'})
-	await collection.queryPictureAll()
+	await collection.queryPictureAsyncAll()
 	const piclist = collection.getPictureList()
 	console.log(JSON.stringify(piclist))
 	try {

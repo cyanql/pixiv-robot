@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import fs from 'app/lib/promise-fs'
+import fs from 'fs-promise'
 import ProxyAgent from 'https-proxy-agent'
 import path from 'path'
 
@@ -24,16 +24,18 @@ class Picture {
 	 *   path
 	 * }
 	 */
-	async download(option) {
+	async downloadAsync(option) {
 		let res
 		//请求图片资源
 		try {
 			res = await fetch(this._src, {
-				headers: option.headers,
+				headers: new Headers({
+					...option.headers
+				}),
 				agent: option.proxy && new ProxyAgent(option.proxy)
 			})
 		} catch (err) {
-			throw new Error(`err -> request Picture :${this._name}\n${err}`)
+			throw new Error(`err -> requestAsync Picture :${this._name}\n${err}`)
 		}
 
 		//当返回状态为404
@@ -94,7 +96,7 @@ class Picture {
 		if (this._src.match(/\.jpg$/)) {
 			this._src = this._src.replace(/\.jpg$/, '.png')
 			this._name = this._name.replace(/\.jpg$/, '.png')
-			// this.download(path)
+			// this.downloadAsync(path)
 		}
 	}
 }

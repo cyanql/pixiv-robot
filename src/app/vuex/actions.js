@@ -27,24 +27,24 @@ export const changePassWord = ({dispatch}, e) => {
 
 
 
-export const login = async ({dispatch}, userinfo) => {
-	await pixivApi.login(userinfo)
+export const loginAsync = async ({dispatch}, userinfo) => {
+	await pixivApi.loginAsync(userinfo)
     dispatch(types.LOGIN)
 }
 
-export const setOption = async ({dispatch}, config) => {
+export const setOption = ({dispatch}, config) => {
 	pixivApi.setOption(config)
 	dispatch(types.CONFIG)
 }
 
-export const search = async ({dispatch}, authorId) => {
+export const searchAsync = async ({dispatch}, authorId) => {
 	pixivApi.setOption({authorId: authorId})
 	await pixivApi.downloadThumbnails()
 	const picList = await pixivApi.getPictrueSrcFromLocal()
 	dispatch(types.SEARCH, picList)
 }
 
-export const download = async ({dispatch}, picList) => {
+export const downloadAsync = async ({dispatch}, picList) => {
 	await pixivApi.downloadPictures(picList)
 	dispatch(types.DOWNLOAD)
 }

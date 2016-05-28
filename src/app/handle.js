@@ -1,64 +1,90 @@
-import User from 'app/models/User'
-import Collection from 'app/models/Collection'
+import UserInfo from 'app/models/UserInfo'
+import Pixiv from 'app/models/Pixiv'
 import Picture from 'app/models/Picture'
-import fs from 'app/lib/promise-fs'
+import fs from 'fs-promise'
 import ImageSize from 'image-size'
 import path from 'path'
 
-	//配置请求选项
-const option = {
+const userinfo = new UserInfo({
+	username: '',
+	password: '',
 	cookie: '',
-	authorId: '',
 	proxy: '',
-	cachePath: path.join(__dirname,'cache'),
 	downloadPath: ''
-}
+})
+userinfo.loadFromLocalAsync(path.join())
 
-export const setOption = (opt) => {
-	Object.assign(option, opt)
-}
+const pixiv = new Pixiv()
 
-export const login = async (userinfo) => {
+export const loginAsync = async (info) => {
 	//读取cookie
-	let cookiepath = path.join(option.cachePath, 'pixiv_cookie.txt')
-	let cookie = await fs.readFile(cookiepath, 'utf8')
+	let cookie = userinfo.get('cookie')
 
 	if (!cookie) {
-		console.log('login')
-		//创建用户
-		const user = new User(userinfo)
 		//用户登录
-		await user.login()
-		//获取用户cookie
-		cookie = user.getCookie()
+		try {
+			await pixiv.loginAsync({
+				method: 'POST',
+				mode: 'no-cors',
+				redirect: 'manual',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				proxy: info.proxy,
+				body: `mode=login&pixiv_id=${info.username}&pass=${info.password}&skip=1`
+			})
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+
+		//获取cookie
+		cookie = pixiv.get('cookie')
 		//写入cookie
-		fs.writeFile(cookiepath, cookie)
+		userinfo.update('cookie', cookie)
+	}
+	return true
+}
+
+export const setOption = (option) => {
+	const keys = Object.keys(option)
+	for (const key of keys) {
+		userinfo.update(key, option[key])
+	}
+}
+
+export const downloadThumbnails = async (authorId) => {
+	const option = {
+		authorId,
+		proxy: userinfo.get('proxy'),
+		headers: {
+			cookie: userinfo.get('cookie')
+		}
 	}
 
-	setOption({cookie})
-}
-
-
-export const downloadThumbnails = async () => {
-	//创建作品集
-	const collection = new Collection(option)
 	//解析页面，并查询图片元素
-	await collection.queryPictureAll()
-
+	await pixiv.queryPictureAsync(option)
 
 	//获取缩略图片列表
-	const thumbnailList = await collection.getPictureList()
+	const thumbnailList = await pixiv.get('picList')
 	//创建下载路径，并下载
-	const thumbnailPath = path.join(option.cachePath, option.authorId, 'thumbnail')
-	await download(thumbnailPath, thumbnailList, option)
+	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
+	await downloadAsync(thumbnailPath, thumbnailList, option)
 }
 
-export const downloadPictures= async (picList) => {
+export const downloadPictures= async (authorId, picList) => {
+	const option = {
+		authorId,
+		proxy: userinfo.get('proxy'),
+		headers: {
+			cookie: userinfo.get('cookie')
+		}
+	}
 	//将缩略图源替换为原始图源
 	const originalPicList = mapReplaceSrc(picList)
 	//创建下载路径，并下载
-	const originalPicPath = path.join(option.downloadPath, option.authorId)
-	await download(originalPicPath, originalPicList, option)
+	const originalPicPath = path.join(userinfo.get('downloadPath'), authorId)
+	await downloadAsync(originalPicPath, originalPicList, option)
 }
 
 
@@ -72,14 +98,14 @@ function mapReplaceSrc(picList) {
 	})
 }
 
-async function download(pathname, picList, option) {
+async function downloadAsync(pathname, picList, option) {
 	const arr = []
 
 	await fs.mkdirs(pathname)
 	//异步请求， 同步下载
 	for (let v of picList) {
 		const pic = new Picture({...option, ...v})
-		arr.push(pic.download(pathname))
+		arr.push(pic.downloadAsync(pathname))
 	}
 	for (let v of arr) {
 		await v
@@ -88,23 +114,14 @@ async function download(pathname, picList, option) {
 	//
 	//	for (let v of picList) {
 	//		const pic = new Picture({...option, ...v})
-	//		await pic.download(pathname)
+	//		await pic.downloadAsync(pathname)
 	//	}
 	//
 }
 
-export function thumbnailToOriginal(picList) {
-	return picList.map((v) => {
-		//循环1000000次，直接替换约为0.26s-0.32s,正则替换约为0.18s~0.2s
-		//v.src.replace('c/150x150/img-master','img-original').replace('_master1200','')
-		v.src = v.src.replace(/c.*img-master/, 'img-original').replace(/(_p\d+)_.*(\..*)$/, '$1$2')
-		return v
-	})
-}
+export const getPictureFromLocal = async () => {
 
-export const getPictureSrcFromLocal = async () => {
-
-	const thumbnailPath = path.join(option.cachePath, option.authorId, 'thumbnail')
+	const thumbnailPath = path.join(userinfo.get('cachePath'), userinfo.get('authorId'), 'thumbnail')
 
 	const filenames = await fs.readdir(thumbnailPath)
 

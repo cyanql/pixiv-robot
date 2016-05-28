@@ -4,7 +4,7 @@ const expect = chai.expect
 
 
 describe('Pixiv', function() {
-	this.timeout(20000)
+	this.timeout(30000)
 	let pixiv = null
 
 	beforeEach(() => {
@@ -17,51 +17,51 @@ describe('Pixiv', function() {
 		expect(pixiv.set.bind(pixiv, 'other')).to.throw('not be undefined')
 	})
 
-	it('request', async () => {
+	it('requestAsync', async () => {
 		const option = {
 			url: 'xxxxxxxxxx'
 		}
 		let error
 		try {
-			const res = await pixiv.request(option)
+			const res = await pixiv.requestAsync(option)
+			expect(res.status).to.eql(200)
 		} catch (err) {
 			error = err
 		}
 		expect(error).to.be.an('error')
 	})
 
-	it('login', async () => {
+	it('loginAsync', async () => {
 		const username = 'icarusves@gmail.com'
 		const password = 'michael1123'
 		const option = {
 			method: 'POST',
 			mode: 'no-cors',
 			redirect: 'manual',
-			headers: new Headers({
+			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
-			}),
+			},
 			proxy: 'http://127.0.0.1:8787',
 			body: `mode=login&pixiv_id=${username}&pass=${password}&skip=1`
 		}
-		const headers = await pixiv.login(option)
-		const cookie = headers.getAll('cookie')
+		const res = await pixiv.loginAsync(option)
+		const cookie = res.headers.getAll('set-cookie')
 
 		expect(cookie).to.be.an('array')
 		expect(cookie).to.have.length.least(1)
 		expect(cookie).to.satisfy((data) => data.some(v => /PHPSESSID.*\d+_\d+/.test(v)))
 	})
 
-	it('queryPicture', async () => {
+	it('queryPictureAsync', async () => {
 		const option = {
-			headers: new Headers({
-				cookie: 'PHPSESSID=10419852_43bd297b3f4ebfc3cd8c406d1468ff7b',
-				referer: 'https://www.pixiv.net'
-			}),
+			headers: {
+				cookie: 'PHPSESSID=10419852_43bd297b3f4ebfc3cd8c406d1468ff7b'
+			},
 			proxy: 'http://127.0.0.1:8787',
-			url: 'http://www.pixiv.net/member_illust.php?id=45438'
+			authorId: '1248336&type=all&p=4'
 		}
 
-		const picList = await pixiv.queryPicture(option)
+		const picList = await pixiv.queryPictureAsync(option)
 		expect(picList).to.be.an('array')
 		expect(picList).to.have.length.of.at.least(20)
 		expect(picList).to.satisfy((data) => data.every(v => /150x150/.test(v.src)))

@@ -7,7 +7,7 @@
     "browser": "NODE_ENV=development webpack-dev-server --hot --inline --color --host 0.0.0.0 --port 8080",
     "electron": "NODE_ENV=development electron ./src/main.js",
     "test": "NODE_PATH=./src mocha --compilers js:babel-core/register -R spec ",
-	"test:watch": "NODE_PATH=./src mocha --compilers js:babel-core/register -R spec --watch",
+    "test:watch": "NODE_PATH=./src mocha --compilers js:babel-core/register -R spec --watch",
     "test:cover": "NODE_PATH=./src babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha"
   },
   "dependencies": {
@@ -36,9 +36,9 @@
     "eslint": "^2.9.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
+    "fs-promise": "^0.5.0",
     "html-webpack-plugin": "^2.10.0",
     "istanbul": "^0.4.3",
-    "jscover": "^1.0.0",
     "json-loader": "^0.5.4",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",

@@ -1,39 +1,74 @@
-import fs from 'app/lib/promise-fs'
+import fs from 'fs-promise'
+import path from 'path'
 
 export default
 class UserInfo {
-	constructor(option) {
+	constructor(option = {}) {
 		Object.assign(this, {
-			username: '',
-			password: '',
-			cookie: '',
-			proxy: '',
-			downloadPath: '',
-			...option
+			_username: '',
+			_password: '',
+			_cookie: '',
+			_proxy: '',
+			_downloadPath: '',
+			_cachePath: path.join(process.cwd(), 'cache'),
+			_filename: 'userinfo.json'
+		})
+
+		Object.keys(option).forEach(key => {
+			this[`_${key}`] = option[key]
 		})
 	}
-	set(prop, value) {
+	/**
+	 * 更新属性的值
+	 * @param {[string]} prop	更新已经存在的属性
+	 * @param {[all]} 	value 	任何类型
+	 */
+	update(prop, value) {
+		prop = `_${prop}`
 		if (value === undefined)
 			throw new Error('value should not be undefined')
 		if (!(prop in this))
-			throw new Error(`'${prop}' is not allowed to set, you should create it when init`)
+			throw new Error(`'${prop}' is not exists, you should create it when init`)
 
-		this[`_${prop}`] = value
+		this[prop] = value
 	}
+	/**
+	 * 获取属性值
+	 * @param  {[string]} prop 	只能获取已存在的属性
+	 * @return {[all]}     初始化或更新所设置的值
+	 */
 	get(prop) {
+		prop = `_${prop}`
 		if (!(prop in this))
-			throw new Error(`'${prop}' is not allowed to get, you should create it when init`)
+			throw new Error(`'${prop}' is not exists, you should create it when init`)
 
-		return this[`_${prop}`]
+		return this[prop]
 	}
+
 	delete(prop) {
 		delete this[`_${prop}`]
 	}
-	async saveToLocal(pathname) {
+	/**
+	 * 从本地读取信息
+	 * @param  {[string]} pathname 路径+文件名
+	 */
+	async loadFromLocalAsync(pathname = path.join(this._cachePath, this._filename)) {
 		try {
-			await fs.writeFile(pathname, JSON.stringify(this))
+			const json = await fs.readJson(pathname)
+			Object.assign(this, json)
 		} catch (err) {
-			throw new Error(`saveToLocal fail:\n${err}`)
+			throw new Error(`loadFromLocalAsync fail-${err}`)
+		}
+	}
+	/**
+	 * 存储信息到本地
+	 * @param  {[string]} pathname 路径+文件名
+	 */
+	async saveToLocalAsync(pathname = path.join(this._cachePath, this._filename)) {
+		try {
+			await fs.outputJson(pathname, this)
+		} catch (err) {
+			throw new Error(`saveToLocalAsync fail-${err}`)
 		}
 	}
 }
