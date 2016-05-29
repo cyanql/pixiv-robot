@@ -31,18 +31,12 @@ describe('Pixiv', function() {
 		expect(error).to.be.an('error')
 	})
 
-	it('loginAsync', async () => {
-		const username = 'icarusves@gmail.com'
-		const password = 'michael1123'
+	it.only('loginAsync', async () => {
+		const username = 'pixivrobot@gmail.com'
+		const password = 'pixiv123456'
 		const option = {
-			method: 'POST',
-			mode: 'no-cors',
-			redirect: 'manual',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			proxy: 'http://127.0.0.1:8787',
-			body: `mode=login&pixiv_id=${username}&pass=${password}&skip=1`
+			username,
+			password
 		}
 		const res = await pixiv.loginAsync(option)
 		const cookie = res.headers.getAll('set-cookie')
@@ -55,7 +49,7 @@ describe('Pixiv', function() {
 	it('queryPictureAsync', async () => {
 		const option = {
 			headers: {
-				cookie: 'PHPSESSID=10419852_43bd297b3f4ebfc3cd8c406d1468ff7b'
+				cookie: 'PHPSESSID=18465367_b8d1cf1ebc6947607d0167647c84cb34'
 			},
 			proxy: 'http://127.0.0.1:8787',
 			authorId: '1248336&type=all&p=4'

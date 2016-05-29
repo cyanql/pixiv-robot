@@ -1,4 +1,4 @@
-import fs from 'fs-promise'
+import fs from 'fs-extra-promise'
 import path from 'path'
 
 export default
@@ -52,23 +52,23 @@ class UserInfo {
 	 * 从本地读取信息
 	 * @param  {[string]} pathname 路径+文件名
 	 */
-	async loadFromLocalAsync(pathname = path.join(this._cachePath, this._filename)) {
+	loadFromLocal(pathname = path.join(this._cachePath, this._filename)) {
 		try {
-			const json = await fs.readJson(pathname)
+			const json = fs.readJsonSync(pathname)
 			Object.assign(this, json)
 		} catch (err) {
-			throw new Error(`loadFromLocalAsync fail-${err}`)
+			console.error(`loadFromLocalAsync fail-${err}`)
 		}
 	}
 	/**
 	 * 存储信息到本地
 	 * @param  {[string]} pathname 路径+文件名
 	 */
-	async saveToLocalAsync(pathname = path.join(this._cachePath, this._filename)) {
+	saveToLocal(pathname = path.join(this._cachePath, this._filename)) {
 		try {
-			await fs.outputJson(pathname, this)
+			fs.outputJsonSync(pathname, this)
 		} catch (err) {
-			throw new Error(`saveToLocalAsync fail-${err}`)
+			console.error(`saveToLocalAsync fail-${err}`)
 		}
 	}
 }

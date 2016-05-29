@@ -5,7 +5,6 @@ import Setting from 'app/containers/Setting'
 import Search from 'app/containers/Search'
 import VueRouter from 'vue-router'
 
-
 Vue.config.debug = true
 
 Vue.use(VueRouter)
@@ -24,13 +23,13 @@ router.map({
 	'/setting': {
 		name: 'setting',
 		component: Setting
-
 	}
 })
 
 router.beforeEach(({to, next, redirect}) => {
+	console.log(router.app.logined, to)
 	//除login外，处于未登录状态时跳login
-	if (to.name !== 'login' && !to.auth) {
+	if (to.name !== 'login' && !router.app.logined) {
 		redirect('login')
 	} else {
 		next()

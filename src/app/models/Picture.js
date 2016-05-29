@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import fs from 'fs-promise'
+import fs from 'fs-extra-promise'
 import ProxyAgent from 'https-proxy-agent'
 import path from 'path'
 
@@ -8,7 +8,7 @@ class Picture {
 	constructor({src, name, width, height}) {
 		Object.assign(this, {
 			_src: src,
-			_name: name,//src.match(/[^\/]*$/).toString(),
+			_name: name,
 			_width: width,
 			_height: height
 		})
@@ -46,7 +46,7 @@ class Picture {
 
 		//创建下载文件夹
 		try {
-			await fs.mkdirs(option.path)
+			await fs.mkdirsAsync(option.path)
 		} catch (err) {
 			throw new Error(`文件夹创建失败-${err}`)
 		}
@@ -92,11 +92,5 @@ class Picture {
 		process.stdout.write(`${this._name} -- 下载进度 -- ${per}`)
 	}
 	onFinished() {}
-	onNotFound() {
-		if (this._src.match(/\.jpg$/)) {
-			this._src = this._src.replace(/\.jpg$/, '.png')
-			this._name = this._name.replace(/\.jpg$/, '.png')
-			// this.downloadAsync(path)
-		}
-	}
+	onNotFound() {}
 }

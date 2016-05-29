@@ -1,5 +1,5 @@
 import UserInfo from 'app/models/UserInfo'
-import fs from 'fs-promise'
+import fs from 'fs-extra-promise'
 // import path from 'path'
 import chai from 'chai'
 const expect = chai.expect
@@ -22,7 +22,7 @@ describe('UserInfo', () => {
 	})
 
 	it('update', () => {
-		const username = 'michael'
+		const username = 'pixivrobot'
 		const allowKey = 'username'
 		const otherKey = 'user'
 		user.update(allowKey, username)
@@ -32,7 +32,7 @@ describe('UserInfo', () => {
 	})
 
 	it('get', () => {
-		const username = 'michael'
+		const username = 'pixivrobot'
 		const allowKey = 'username'
 		const otherKey = 'user'
 		user.update(allowKey, username)
@@ -41,21 +41,21 @@ describe('UserInfo', () => {
 	})
 
 	it('delete', () => {
-		const username = 'michael'
+		const username = 'pixivrobot'
 		const allowKey = 'username'
 		user.update(allowKey, username)
 		user.delete(allowKey)
 		expect(user.get.bind(user, allowKey)).to.throw('not exists')
 	})
 
-	it('saveToLocalAsync & loadFromLocalAsync', async () => {
-		await user.saveToLocalAsync()
+	it('saveToLocal & loadFromLocal', async () => {
+		user.saveToLocal()
 
 		const temp = new UserInfo()
-		await temp.loadFromLocalAsync()
+		temp.loadFromLocal()
 		expect(temp.get('other')).to.have.property('prop', 'value')
 
-		await fs.remove(temp.get('cachePath'))
+		await fs.removeAsync(temp.get('cachePath'))
 	})
 
 })

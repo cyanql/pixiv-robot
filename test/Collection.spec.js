@@ -1,5 +1,5 @@
 import Collection from 'app/models/Collection'
-import fs from 'fs'
+import fs from 'fs-extra-promise'
 import path from 'path'
 import chai from 'chai'
 const expect = chai.expect

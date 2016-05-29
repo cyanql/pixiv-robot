@@ -8,7 +8,7 @@ const SRC_PATH = path.resolve(__dirname, 'src')
 
 const config = {
 	cache: true,
-    target: 'electron',
+    target: 'node',
     entry: {
         index: ['./src/app/index.js']
     },
@@ -81,7 +81,7 @@ if (process.env.NODE_ENV === 'development') {
     for (name in config.entry) {
         if (name !== 'lib') {
             config.entry[name].unshift('webpack/hot/only-dev-server')
-            // config.entry[name].unshift('webpack-dev-server/client?http://localhost:8080')
+            // config.entry[name].unshift('webpack-dev-server/client?http://localhost:6666')
         }
     }
     config.plugins.unshift(new webpack.DefinePlugin({

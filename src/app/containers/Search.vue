@@ -2,7 +2,7 @@
 	<div class="search clear-fix">
 		<div class="btn-group clear-fix">
 			<a class="btn" @click="searchAsync">查找</a>
-			<a class="btn" @click="downloadAsync">下载</a>
+			<a class="btn" @click="downloadPicListAsync">下载</a>
 		</div>
 		<div class="content clear-fix">
 			<label>作者ID</label>
@@ -66,7 +66,10 @@ export default {
 			background-color: darken(@main-color, 2%);
 			width: 100%;
 			text-indent: 10px;
-			font-size: 16px;
+			font-size: 14px;
+			line-height: @input-height * .6;
+			margin: @input-height * .2 0;
+			border-radius: @input-height * .5;
 		}
 	}
 

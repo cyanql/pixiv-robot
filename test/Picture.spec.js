@@ -2,7 +2,7 @@ import sinon from 'sinon'
 import chai from 'chai'
 import path from 'path'
 import Picture from 'app/models/Picture'
-import fs from 'fs-promise'
+import fs from 'fs-extra-promise'
 
 const expect = chai.expect
 
@@ -15,7 +15,7 @@ describe('Picture', function() {
 	}
 	const downloadOption = {
 		headers: {
-			cookie: 'PHPSESSID=10419852_43bd297b3f4ebfc3cd8c406d1468ff7b',
+			cookie: 'PHPSESSID=18465367_b8d1cf1ebc6947607d0167647c84cb34',
 			referer: 'https://www.pixiv.net'
 		},
 		path: path.join(process.cwd(), 'download'),
@@ -33,7 +33,7 @@ describe('Picture', function() {
 		finishedcall = sinon.spy()
 	})
 	after(async () => {
-		await fs.remove(downloadOption.path)
+		await fs.removeAsync(downloadOption.path)
 	})
 
 	it('constructor', () => {
@@ -44,7 +44,7 @@ describe('Picture', function() {
 	it('downloadAsync success', async () => {
 		//运行初始回调
 		await pic.downloadAsync(downloadOption)
-		const exist = await fs.exists(downloadOption.path)
+		const exist = await fs.existsAsync(downloadOption.path)
 		expect(exist).to.be.true
 
 		//运行自定义回调

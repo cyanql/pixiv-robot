@@ -1,6 +1,7 @@
 import * as types from './types'
 
 const state = {
+	logined: false,
     info: {
         username: '',
         password: ''
@@ -17,8 +18,11 @@ const state = {
 }
 
 const mutations = {
-    [types.LOGIN] (state) {
-
+	[types.CHECK_COOKIE] (state, exists){
+		state.logined = exists
+	},
+    [types.LOGIN] (state, logined) {
+		state.logined = logined
     },
 	[types.SEARCH] (state) {
 

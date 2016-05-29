@@ -1,10 +1,11 @@
 import UserInfo from 'app/models/UserInfo'
 import Pixiv from 'app/models/Pixiv'
 import Picture from 'app/models/Picture'
-import fs from 'fs-promise'
+import fs from 'fs-extra-promise'
 import ImageSize from 'image-size'
 import path from 'path'
 
+const pixiv = new Pixiv()
 const userinfo = new UserInfo({
 	username: '',
 	password: '',
@@ -12,38 +13,31 @@ const userinfo = new UserInfo({
 	proxy: '',
 	downloadPath: ''
 })
-userinfo.loadFromLocalAsync(path.join())
+userinfo.loadFromLocal()
 
-const pixiv = new Pixiv()
+
+export const existsCookie = () => {
+	//读取cookie
+	return !!userinfo.get('cookie')
+}
 
 export const loginAsync = async (info) => {
-	//读取cookie
-	let cookie = userinfo.get('cookie')
-
-	if (!cookie) {
-		//用户登录
-		try {
-			await pixiv.loginAsync({
-				method: 'POST',
-				mode: 'no-cors',
-				redirect: 'manual',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				proxy: info.proxy,
-				body: `mode=login&pixiv_id=${info.username}&pass=${info.password}&skip=1`
-			})
-		} catch (err) {
-			console.error(err)
-			return false
-		}
-
-		//获取cookie
-		cookie = pixiv.get('cookie')
+	//用户登录
+	try {
+		const res = await pixiv.loginAsync(info)
+		//获取cookie，并检验(密码)
+		const cookie = res.headers.getAll('set-cookie').find(v => /PHPSESSID=\d+_[a-z0-9]+/.test(v))
+		if (!cookie)
+			return true
 		//写入cookie
 		userinfo.update('cookie', cookie)
+		userinfo.saveToLocal()
+
+		return true
+	} catch (err) {
+		console.error(err)
+		return false
 	}
-	return true
 }
 
 export const setOption = (option) => {
@@ -53,7 +47,7 @@ export const setOption = (option) => {
 	}
 }
 
-export const downloadThumbnails = async (authorId) => {
+export const downloadThumbListAsync = async (authorId) => {
 	const option = {
 		authorId,
 		proxy: userinfo.get('proxy'),
@@ -69,10 +63,14 @@ export const downloadThumbnails = async (authorId) => {
 	const thumbnailList = await pixiv.get('picList')
 	//创建下载路径，并下载
 	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
-	await downloadAsync(thumbnailPath, thumbnailList, option)
+	downloadAsync(thumbnailList, {
+		...option,
+		path: thumbnailPath
+	})
+	return thumbnailList
 }
 
-export const downloadPictures= async (authorId, picList) => {
+export const downloadPicListAsync= async (authorId, picList) => {
 	const option = {
 		authorId,
 		proxy: userinfo.get('proxy'),
@@ -84,7 +82,11 @@ export const downloadPictures= async (authorId, picList) => {
 	const originalPicList = mapReplaceSrc(picList)
 	//创建下载路径，并下载
 	const originalPicPath = path.join(userinfo.get('downloadPath'), authorId)
-	await downloadAsync(originalPicPath, originalPicList, option)
+	downloadAsync(originalPicList, {
+		...option,
+		path: originalPicPath
+	})
+	return originalPicList
 }
 
 
@@ -98,14 +100,27 @@ function mapReplaceSrc(picList) {
 	})
 }
 
-async function downloadAsync(pathname, picList, option) {
+async function downloadAsync(picList, option) {
 	const arr = []
 
-	await fs.mkdirs(pathname)
 	//异步请求， 同步下载
 	for (let v of picList) {
-		const pic = new Picture({...option, ...v})
-		arr.push(pic.downloadAsync(pathname))
+		const pic = new Picture({
+			src: v.src,
+			name: v.src.match(/[^\/]*$/).toString()
+		})
+		pic.onProgress = v.onProgress
+		pic.onFinished = v.onFinished
+		pic.onNotFound = ()	=> {
+			if (pic._src.match(/\.jpg$/)) {
+				pic._src = pic._src.replace(/\.jpg$/, '.png')
+				pic._name = pic._name.replace(/\.jpg$/, '.png')
+				arr.push(pic.downloadAsync(option))
+			} else {
+				v.onNotFound()
+			}
+		}
+		arr.push(pic.downloadAsync(option))
 	}
 	for (let v of arr) {
 		await v
@@ -119,20 +134,30 @@ async function downloadAsync(pathname, picList, option) {
 	//
 }
 
-export const getPictureFromLocal = async () => {
+export const getPicListFromCacheAsync = async (authorId) => {
 
-	const thumbnailPath = path.join(userinfo.get('cachePath'), userinfo.get('authorId'), 'thumbnail')
+	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
 
-	const filenames = await fs.readdir(thumbnailPath)
+	if (!await fs.existsAsync(thumbnailPath)) return
+
+	const filenames = await fs.readdirAsync(thumbnailPath)
 
 	return filenames.map(filename => ImageSize(thumbnailPath, filename))
 }
 
+
+export const getPictureFromCacheAsync = async (authorId, filename) => {
+	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
+
+	if (!await fs.existsAsync(thumbnailPath)) return
+
+	return ImageSize(thumbnailPath, filename)
+}
 /*
 	const thumbnailPath = path.join(option.cachePath, authorId, 'thumbnail')
 
 	const root = document.getElementById('root')
-	fs.readdir(thumbnailPath, (err, filenames) => {
+	fs.readdirAsync(thumbnailPath, (err, filenames) => {
 		filenames.forEach((filename) => {
 			//创建图片元素
 			const img = new Image()

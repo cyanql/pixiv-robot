@@ -4,7 +4,7 @@
   "main": "./src/main.js",
   "scripts": {
     "dev": "npm run browser & npm run electron",
-    "browser": "NODE_ENV=development webpack-dev-server --hot --inline --color --host 0.0.0.0 --port 8080",
+    "browser": "NODE_ENV=development webpack-dev-server --hot --inline --color --host 0.0.0.0 --port 3000",
     "electron": "NODE_ENV=development electron ./src/main.js",
     "test": "NODE_PATH=./src mocha --compilers js:babel-core/register -R spec ",
     "test:watch": "NODE_PATH=./src mocha --compilers js:babel-core/register -R spec --watch",
@@ -36,7 +36,7 @@
     "eslint": "^2.9.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
-    "fs-promise": "^0.5.0",
+    "fs-extra-promise": "^0.3.1",
     "html-webpack-plugin": "^2.10.0",
     "istanbul": "^0.4.3",
     "json-loader": "^0.5.4",

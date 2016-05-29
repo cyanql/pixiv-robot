@@ -52,6 +52,7 @@ class Pixiv {
 				}),
 				...option
 			})
+
 			return res
 		} catch (err) {
 			throw err
@@ -63,24 +64,31 @@ class Pixiv {
 	 * {
 	 *  	url,
 	 *  	proxy,
-	 *  	headers,
-	 *  	body,
-	 *  	redirect,
-	 *  	method,
-	 *  	...
+	 *   	username,
+	 *   	password
 	 * }
 	 * @return {[object]}  res 请求返回内容
 	 */
 	async loginAsync (option) {
 		try {
 			//获取请求页面的返回头
-			option.url = option.url || Pixiv.PAGE.LOGIN
-			const res = await this.requestAsync(option)
+			const url = option.url || Pixiv.PAGE.LOGIN
+			const res = await this.requestAsync({
+				url,
+				method: 'POST',
+				mode: 'no-cors',
+				redirect: 'manual',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				proxy: option.proxy,
+				body: `mode=login&pixiv_id=${option.username}&pass=${option.password}&skip=1`
+			})
 			//设置请求头
 			this._headers = {
 				cookie: res.headers.getAll('set-cookie')
 			}
-
+			console.log(option, res.headers.getAll('set-cookie'))
 			return res
 		} catch (err) {
 			console.error(`登陆失败--${err}`)

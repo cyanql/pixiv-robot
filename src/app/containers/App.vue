@@ -2,6 +2,30 @@
 	<router-view></router-view>
 </template>
 
+<script>
+import store from 'app/vuex'
+import * as actions from 'app/vuex/actions'
+
+export default {
+	store,
+	vuex: {
+		getters: {
+			logined: state => state.logined
+	    },
+		actions
+	},
+	beforeCompile() {
+		console.log(this.logined)
+		this.checkCookie()
+		//不存在cookie缓存则跳转login
+		if(!this.logined)
+			this.$router.go('login')
+	}
+}
+
+</script>
+
+
 <style lang="less">
 @import "~app/variables.less";
 
@@ -13,7 +37,9 @@ body,select,dd,dl,dt,li,ol,ul,span,div,form,h1,h2,h3,h4,h5,h6,hr,p,a,button,inpu
 	margin: 0;
 	padding: 0;
 }
-
+body {
+	min-width: 600px;
+}
 li {list-style: none;}
 
 a {text-decoration: none;}

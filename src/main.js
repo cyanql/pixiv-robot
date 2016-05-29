@@ -25,10 +25,9 @@ app.on('ready', () => {
         height: 800,
 		titleBarStyle: 'hidden-inset'
     })
-
     // 加载应用的 index.html
     // mainWindow.loadURL('file://' + __dirname + '/src/template/template.html')
-    mainWindow.loadURL('http://localhost:8080/build/app/')
+    mainWindow.loadURL('http://localhost:3000/build/app/')
 
 	if (process.env.NODE_ENV === 'development') {
 		// 打开开发工具

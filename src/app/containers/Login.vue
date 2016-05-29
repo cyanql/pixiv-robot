@@ -7,7 +7,7 @@
 			<input class="pass" type="password" @input="changePassWord" :value="info.password" placeholder="password">
             <input type="text" @input="changeProxy" :value="option.proxy" placeholder="代理（选填）">
 		</div>
-		<a v-link="'setting'" class="btn submit" @click="loginAsync">登陆</a>
+		<a v-link="'setting'" class="btn submit" @click="loginAsync(info)">登陆</a>
 	</div>
 </template>
 
