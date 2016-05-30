@@ -1,7 +1,7 @@
 import sinon from 'sinon'
 import chai from 'chai'
 import path from 'path'
-import Picture from 'app/models/Picture'
+import Picture from 'main/models/Picture'
 import fs from 'fs-extra-promise'
 
 const expect = chai.expect

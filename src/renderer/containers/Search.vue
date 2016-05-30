@@ -1,8 +1,8 @@
 <template>
 	<div class="search clear-fix">
 		<div class="btn-group clear-fix">
-			<a class="btn" @click="searchAsync">查找</a>
-			<a class="btn" @click="downloadPicListAsync">下载</a>
+			<a class="btn" @click="searchAsync(authorId)">查找</a>
+			<a class="btn" @click="downloadPicListAsync(picList)">下载</a>
 		</div>
 		<div class="content clear-fix">
 			<label>作者ID</label>
@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import store from 'app/vuex'
-import * as actions from 'app/vuex/actions'
+import store from 'renderer/vuex'
+import * as actions from 'renderer/vuex/actions'
 
 export default {
 	store,
@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~app/variables";
+@import "~renderer/variables";
 
 @label-width: 100px;
 

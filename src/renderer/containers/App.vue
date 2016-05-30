@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import store from 'app/vuex'
-import * as actions from 'app/vuex/actions'
+import store from 'renderer/vuex'
+import * as actions from 'renderer/vuex/actions'
 
 export default {
 	store,
@@ -20,6 +20,12 @@ export default {
 		//不存在cookie缓存则跳转login
 		if(!this.logined)
 			this.$router.go('login')
+	},
+	route: {
+		activate(transition) {
+			console.log('activate___________________')
+			transition.next()
+		}
 	}
 }
 
@@ -27,7 +33,7 @@ export default {
 
 
 <style lang="less">
-@import "~app/variables.less";
+@import "~renderer/variables.less";
 
 body,select,dd,dl,dt,li,ol,ul,span,div,form,h1,h2,h3,h4,h5,h6,hr,p,a,button,input,textarea {
 	font: 14px/1.5 'Microsoft YaHei','\\5FAE\8F6F\96C5\9ED1','arial','simsun';

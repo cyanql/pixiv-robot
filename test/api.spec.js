@@ -1,4 +1,4 @@
-import * as api from 'app/models'
+import * as api from 'main/models'
 import fs from 'fs-extra-promise'
 import path from 'path'
 import chai from 'chai'
@@ -15,8 +15,9 @@ describe('All api', function() {
 	it.only('loginAsync', async () => {
 		const option = {
 			username: 'pixivrobot@gmail.com',
-			password: 'pixiv',
-			proxy: 'http://127.0.0.1:8787'
+			password: 'pixiv123456',
+			proxy: 'http://127.0.0.1:8787',
+			downloadPath: ''
 		}
 		let logined
 		logined = await api.loginAsync(option)

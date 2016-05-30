@@ -1,4 +1,4 @@
-import UserInfo from 'app/models/UserInfo'
+import UserInfo from 'main/models/UserInfo'
 import fs from 'fs-extra-promise'
 // import path from 'path'
 import chai from 'chai'

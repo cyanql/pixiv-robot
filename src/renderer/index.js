@@ -1,8 +1,5 @@
 import Vue from 'vue'
-import App from 'app/containers/App'
-import Login from 'app/containers/Login'
-import Setting from 'app/containers/Setting'
-import Search from 'app/containers/Search'
+import App from 'renderer/containers/App'
 import VueRouter from 'vue-router'
 
 Vue.config.debug = true
@@ -14,20 +11,19 @@ const router = new VueRouter()
 router.map({
 	'/': {
 		name: 'search',
-		component: Search
+		component: require('renderer/containers/Search')
 	},
 	'/login': {
 		name: 'login',
-		component: Login
+		component: require('renderer/containers/Login')
 	},
 	'/setting': {
 		name: 'setting',
-		component: Setting
+		component: require('renderer/containers/Setting')
 	}
 })
 
 router.beforeEach(({to, next, redirect}) => {
-	console.log(router.app.logined, to)
 	//除login外，处于未登录状态时跳login
 	if (to.name !== 'login' && !router.app.logined) {
 		redirect('login')
@@ -48,4 +44,8 @@ router.start(App, '#root')
 
 if (module.hot) {
 	module.hot.accept()
+}
+
+export default {
+	router
 }

@@ -1,5 +1,5 @@
 import * as types from './types'
-import * as api from 'app/models'
+import { ipcRenderer } from 'electron'
 
 export const changeAuthorId = ({dispatch}, e) => {
 	dispatch(types.CHANGE_AUTHORID, e.target.value)
@@ -26,40 +26,43 @@ export const changePassWord = ({dispatch}, e) => {
 }
 
 export const checkCookie = ({dispatch}) => {
-	const exists = api.existsCookie()
+	const exists = ipcRenderer.send('existsCookie')
 	dispatch(types.CHECK_COOKIE, exists)
 }
 
-export const loginAsync = async ({dispatch}, userinfo) => {
-	console.log('begin')
-	const logined = await api.loginAsync(userinfo)
-	console.log('end', logined)
-    dispatch(types.LOGIN, logined)
+export const login = ({dispatch}, cookie) => {
+	ipcRenderer.send('setOption', {
+		'cookie': cookie
+	})
+	//返回登录结果
+    dispatch(types.LOGIN, true)
 }
 
 export const setOption = ({dispatch}, option) => {
-	api.setOption(option)
-	dispatch(types.CONFIG)
+	ipcRenderer.send('setOption', option)
+	dispatch(types.SET_OPTION)
 }
 
 export const searchAsync = async ({dispatch}, authorId, refresh) => {
-	let picList = await api.getPicListFromCacheAsync()
+	let picList = await ipcRenderer.send('getPicListFromCacheAsync', authorId)
+	//当本地缓存不存在或强制刷新时
 	if (!picList.length || refresh) {
-		picList = api.downloadThumbListAsync(authorId)
+		picList = ipcRenderer.send('downloadThumbListAsync', authorId)
+	console.log(picList, authorId)
 		picList.forEach((v, i) => {
 			v.onProgress = (per) => progress(i, per)
 			v.onFinished = async () => {
-				const pic = await api.getPictrueFromCacheAsync()
+				const pic = await ipcRenderer.send('getPictrueFromCacheAsync', authorId, v.name)
+				dispatch(types.SEARCH, picList)
 				finished(i, pic)
 			}
 			v.onNotFound = () => notFound(i)
 		})
 	}
-	dispatch(types.SEARCH, picList)
 }
 
 export const downloadPicListAsync = async ({dispatch}, authorId, picList) => {
-	picList = await api.downloadPicListAsync(authorId, picList)
+	picList = await ipcRenderer.send('downloadPicListAsync', authorId, picList)
 	picList.forEach((v, i) => {
 		v.onProgress = (per) => progress(i, per)
 		v.onFinished = () => finished(i)

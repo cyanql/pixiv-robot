@@ -7,10 +7,9 @@ const BUILD_PATH = path.resolve(__dirname, 'build')
 const SRC_PATH = path.resolve(__dirname, 'src')
 
 const config = {
-	cache: true,
-    target: 'node',
+    target: 'electron',
     entry: {
-        index: ['./src/app/index.js']
+        index: ['./src/renderer/index.js']
     },
     output: {
         path: BUILD_PATH, //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
@@ -21,8 +20,8 @@ const config = {
     resolve: {
         root: process.cwd(),
         alias: {
-			app: 'src/app',
-            assets: 'src/assets'
+			renderer: 'src/renderer',
+            assets: 'assets'
         },
         extensions: ['', '.js', '.vue']
     },
@@ -64,9 +63,9 @@ const config = {
 for (let name in config.entry) {
     if (name !== 'lib') {
         config.plugins.push(new HtmlWebpackPlugin({
-            title: 'Pixiv@spider',
+            title: 'Pixiv@robot',
             chunks: [name],
-            filename: './app/' + name + '.html',
+            filename: './renderer/' + name + '.html',
             inject: 'body',
             hash: true,
             minify: {
@@ -81,7 +80,7 @@ if (process.env.NODE_ENV === 'development') {
     for (name in config.entry) {
         if (name !== 'lib') {
             config.entry[name].unshift('webpack/hot/only-dev-server')
-            // config.entry[name].unshift('webpack-dev-server/client?http://localhost:6666')
+            config.entry[name].unshift('webpack-dev-server/client?http://localhost:3000')
         }
     }
     config.plugins.unshift(new webpack.DefinePlugin({

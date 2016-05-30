@@ -1,4 +1,4 @@
-import Pixiv from 'app/models/Pixiv'
+import Pixiv from 'main/models/Pixiv'
 import chai from 'chai'
 const expect = chai.expect
 

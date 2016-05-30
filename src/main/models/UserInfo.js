@@ -54,7 +54,7 @@ class UserInfo {
 	 */
 	loadFromLocal(pathname = path.join(this._cachePath, this._filename)) {
 		try {
-			const json = fs.readJsonSync(pathname)
+			const json = fs.readJsonSync(pathname, {throw: false})
 			Object.assign(this, json)
 		} catch (err) {
 			console.error(`loadFromLocalAsync fail-${err}`)

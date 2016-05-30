@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import ProxyAgent from 'https-proxy-agent'
-import Collection from 'app/models/Collection'
+import Collection from './Collection'
 
 
 export default
@@ -76,8 +76,6 @@ class Pixiv {
 			const res = await this.requestAsync({
 				url,
 				method: 'POST',
-				mode: 'no-cors',
-				redirect: 'manual',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
@@ -88,7 +86,7 @@ class Pixiv {
 			this._headers = {
 				cookie: res.headers.getAll('set-cookie')
 			}
-			console.log(option, res.headers.getAll('set-cookie'))
+
 			return res
 		} catch (err) {
 			console.error(`登陆失败--${err}`)

@@ -5,8 +5,8 @@
         <div class="form">
             <div class="form-item clear-fix">
 				<span>下载路径</span>
-				<span>{{option.downloadPath || '无'}}</span>
-				<span @click="changeDownloadPath(option.downloadPath)">...</span>
+				<span>{{info.downloadPath || '无'}}</span>
+				<span @click="changeDownloadPath(info.downloadPath)">...</span>
 			</div>
         </div>
 		<a v-link="'search'" class="btn submit" @click="setOption(option)">设置</a>
@@ -15,14 +15,14 @@
 
 
 <script>
-import store from 'app/vuex'
-import * as actions from 'app/vuex/actions'
+import store from 'renderer/vuex'
+import * as actions from 'renderer/vuex/actions'
 
 export default {
 	store,
 	vuex: {
 		getters: {
-			option: state => state.option
+			info: state => state.info
 		},
 		actions: {
 			changeDownloadPath: actions.changeDownloadPath,
@@ -33,7 +33,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "~app/variables";
+@import "~renderer/variables";
 
 
 .form {

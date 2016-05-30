@@ -1,7 +1,11 @@
 // 控制应用生命周期的模块。
-const app = require('app')
+import app from 'app'
 // 创建原生浏览器窗口的模块
-const BrowserWindow = require('browser-window')
+import BrowserWindow from 'browser-window'
+
+import electronReload from './reload'
+
+electronReload(__dirname)
 
 // 保持一个对于 window 对象的全局引用，不然，当 JavaScript 被 GC，
 // window 会被自动地关闭
@@ -27,8 +31,8 @@ app.on('ready', () => {
     })
     // 加载应用的 index.html
     // mainWindow.loadURL('file://' + __dirname + '/src/template/template.html')
-    mainWindow.loadURL('http://localhost:3000/build/app/')
-
+    mainWindow.loadURL('http://localhost:3000/build/renderer/')
+console.log('wtf')
 	if (process.env.NODE_ENV === 'development') {
 		// 打开开发工具
 		mainWindow.openDevTools()

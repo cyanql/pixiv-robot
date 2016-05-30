@@ -1,15 +1,14 @@
 import * as types from './types'
 
+
 const state = {
 	logined: false,
     info: {
-        username: '',
-        password: ''
-    },
-    option: {
-        proxy: 'http://127.0.0.1:8787',
+        username: 'pixivrobot@gmail.com',
+        password: 'pixiv123456',
+		proxy: 'http://127.0.0.1:8787',
         downloadPath: ''
-    },
+	},
     authorId: '',
     imagelist: [{
 		src: '',
@@ -27,7 +26,7 @@ const mutations = {
 	[types.SEARCH] (state) {
 
 	},
-	[types.CONFIG] (state) {
+	[types.SET_OPTION] (state) {
 
 	},
 	[types.DOWNLOAD] (state) {
@@ -39,13 +38,13 @@ const mutations = {
 		state.authorId = value
 	},
 	[types.CHANGE_DOWNLOADPATH] (state, value) {
-		state.option.downloadPath = value
+		state.info.downloadPath = value
 	},
 	[types.CHANGE_TIMEOUT] (state, value) {
-		state.option.timeout = value
+		state.info.timeout = value
 	},
 	[types.CHANGE_PROXY] (state, value) {
-		state.option.proxy = value
+		state.info.proxy = value
 	},
 	[types.CHANGE_USER_NAME] (state, value) {
 		state.info.username = value

@@ -2,7 +2,7 @@ export const LOGIN = 'LOGIN'
 
 export const SEARCH = 'SEARCH'
 
-export const CONFIG = 'CONFIG'
+export const SET_OPTION = 'SET_OPTION'
 
 export const DOWNLOAD = 'DOWNLOAD'
 

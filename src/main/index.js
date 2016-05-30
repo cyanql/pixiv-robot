@@ -1,6 +1,7 @@
-import UserInfo from 'app/models/UserInfo'
-import Pixiv from 'app/models/Pixiv'
-import Picture from 'app/models/Picture'
+import ipcMain from 'ipc-main'
+import UserInfo from './models/UserInfo'
+import Pixiv from './models/Pixiv'
+import Picture from './models/Picture'
 import fs from 'fs-extra-promise'
 import ImageSize from 'image-size'
 import path from 'path'
@@ -15,20 +16,21 @@ const userinfo = new UserInfo({
 })
 userinfo.loadFromLocal()
 
+ipcMain.on('checkCookie', (e) => {
+	e.returnValue = !!userinfo.get('cookie')
+})
 
-export const existsCookie = () => {
-	//读取cookie
-	return !!userinfo.get('cookie')
-}
 
-export const loginAsync = async (info) => {
+//由electron直接抓取页面替代
+/*
+ipcMain.on('loginAsync', (info) => {
 	//用户登录
 	try {
 		const res = await pixiv.loginAsync(info)
 		//获取cookie，并检验(密码)
 		const cookie = res.headers.getAll('set-cookie').find(v => /PHPSESSID=\d+_[a-z0-9]+/.test(v))
 		if (!cookie)
-			return true
+			return false
 		//写入cookie
 		userinfo.update('cookie', cookie)
 		userinfo.saveToLocal()
@@ -38,16 +40,18 @@ export const loginAsync = async (info) => {
 		console.error(err)
 		return false
 	}
-}
+})
+*/
 
-export const setOption = (option) => {
+ipcMain.on('setOption', (e, option) => {
 	const keys = Object.keys(option)
 	for (const key of keys) {
 		userinfo.update(key, option[key])
 	}
-}
+	userinfo.saveToLocal()
+})
 
-export const downloadThumbListAsync = async (authorId) => {
+ipcMain.on('downloadThumbListAsync', async (e, authorId) => {
 	const option = {
 		authorId,
 		proxy: userinfo.get('proxy'),
@@ -67,10 +71,10 @@ export const downloadThumbListAsync = async (authorId) => {
 		...option,
 		path: thumbnailPath
 	})
-	return thumbnailList
-}
+	e.returnValue = thumbnailList
+})
 
-export const downloadPicListAsync= async (authorId, picList) => {
+ipcMain.on('downloadPicListAsync', (e, authorId, picList) => {
 	const option = {
 		authorId,
 		proxy: userinfo.get('proxy'),
@@ -86,13 +90,13 @@ export const downloadPicListAsync= async (authorId, picList) => {
 		...option,
 		path: originalPicPath
 	})
-	return originalPicList
-}
+	e.returnValue = originalPicList
+})
 
 
 
 function mapReplaceSrc(picList) {
-	return picList.map((v) => {
+	return picList.map(v => {
 		//循环1000000次，直接替换约为0.26s-0.32s,正则替换约为0.18s~0.2s
 		//v.src.replace('c/150x150/img-master','img-original').replace('_master1200','')
 		v.src = v.src.replace(/c.*img-master/, 'img-original').replace(/(_p\d+)_.*(\..*)$/, '$1$2')
@@ -134,25 +138,26 @@ async function downloadAsync(picList, option) {
 	//
 }
 
-export const getPicListFromCacheAsync = async (authorId) => {
-
+ipcMain.on('getPicListFromCacheAsync', async (e, authorId) => {
 	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
 
-	if (!await fs.existsAsync(thumbnailPath)) return
+	if (!await fs.existsAsync(thumbnailPath))
+		return e.returnValue = []
 
 	const filenames = await fs.readdirAsync(thumbnailPath)
 
-	return filenames.map(filename => ImageSize(thumbnailPath, filename))
-}
+	e.returnValue = filenames.map(filename => ImageSize(thumbnailPath, filename))
+})
 
 
-export const getPictureFromCacheAsync = async (authorId, filename) => {
+ipcMain.on('getPictureFromCacheAsync', async (e, authorId, filename) => {
 	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail')
 
-	if (!await fs.existsAsync(thumbnailPath)) return
+	if (!await fs.existsAsync(thumbnailPath))
+		return e.returnValue =
 
-	return ImageSize(thumbnailPath, filename)
-}
+	e.returnValue = ImageSize(thumbnailPath, filename)
+})
 /*
 	const thumbnailPath = path.join(option.cachePath, authorId, 'thumbnail')
 
