@@ -11,21 +11,14 @@ export default {
 	vuex: {
 		getters: {
 			logined: state => state.logined
-	    },
+		},
 		actions
 	},
 	beforeCompile() {
-		console.log(this.logined)
 		this.checkCookie()
 		//不存在cookie缓存则跳转login
-		if(!this.logined)
-			this.$router.go('login')
-	},
-	route: {
-		activate(transition) {
-			console.log('activate___________________')
-			transition.next()
-		}
+		/*if(!this.logined)
+			this.$router.go('login')*/
 	}
 }
 
@@ -60,11 +53,11 @@ input[type="file"] {
 }
 
 .option {
-    position: absolute;
-    top: 15%;
+	position: absolute;
+	top: 15%;
 	left: 0;
 	right: 0;
-    width: @width;
+	width: @width;
 	margin: 0 auto;
 
 	& > .logo {
@@ -111,13 +104,13 @@ input[type="file"] {
 }
 
 .clear-fix {
-    overflow: hidden;
+	overflow: hidden;
 
 	&:after {
-	    content: '';
-	    clear: both;
-	    font-size: 0;
-	    visibility: hidden;
+		content: '';
+		clear: both;
+		font-size: 0;
+		visibility: hidden;
 	}
 }
 

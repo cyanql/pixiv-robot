@@ -76,6 +76,8 @@ class Pixiv {
 			const res = await this.requestAsync({
 				url,
 				method: 'POST',
+				mode: 'no-cors',
+				redirect: 'manual',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},

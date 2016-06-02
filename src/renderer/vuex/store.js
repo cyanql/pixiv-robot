@@ -1,40 +1,53 @@
 import * as types from './types'
-
+import { remote } from 'electron'
 
 const state = {
 	logined: false,
-    info: {
-        username: 'pixivrobot@gmail.com',
-        password: 'pixiv123456',
+	info: {
+		username: 'pixivrobot@gmail.com',
+		password: 'pixiv123456',
 		proxy: 'http://127.0.0.1:8787',
-        downloadPath: ''
+		downloadPath: remote.app.getPath('pictures')
 	},
-    authorId: '',
-    imagelist: [{
+	authorId: '45438&type=all&p=2',
+	picList: [
+		/*{
 		src: '',
-		id: ''
-	}]
+		localSrc: '',
+		name: '',
+		width: '',
+		height: '',
+		type: '',
+		selected: false,
+	}*/]
 }
 
 const mutations = {
 	[types.CHECK_COOKIE] (state, exists){
 		state.logined = exists
 	},
-    [types.LOGIN] (state, logined) {
+	[types.LOGIN] (state, logined) {
 		state.logined = logined
-    },
-	[types.SEARCH] (state) {
-
+	},
+	[types.SEARCH] (state, picList) {
+		state.picList = state.picList.concat(picList)
 	},
 	[types.SET_OPTION] (state) {
 
+	},
+	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
+		state.picList[index].width = width
+		state.picList[index].height = height
+	},
+	[types.SELECT_PICITEM] (state, index) {
+		state.picList[index].selected = !state.picList[index].selected
 	},
 	[types.DOWNLOAD] (state) {
 
 	},
 	[types.CHANGE_AUTHORID] (state, value) {
-		if (!/^\d+$/.test(value))
-			return
+		// if (!/^\d+$/.test(value))
+		// 	return
 		state.authorId = value
 	},
 	[types.CHANGE_DOWNLOADPATH] (state, value) {

@@ -3,7 +3,6 @@ import cheerio from 'cheerio'
 export default
 class Collection {
 	constructor(text) {
-		console.log(text)
 		Object.assign(this, {
 			_$: cheerio.load(text),
 			_multipleList: [],

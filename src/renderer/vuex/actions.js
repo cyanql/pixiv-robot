@@ -1,16 +1,26 @@
 import * as types from './types'
-import { ipcRenderer } from 'electron'
+import store from './index'
+import { remote, ipcRenderer } from 'electron'
 
 export const changeAuthorId = ({dispatch}, e) => {
 	dispatch(types.CHANGE_AUTHORID, e.target.value)
 }
 
-export const changeDownloadPath = ({dispatch}, value) => {
-	dispatch(types.CHANGE_DOWNLOADPATH, value)
+export const changePicItemStyle = ({dispatch}, e, index) => {
+	dispatch(types.CHANGE_PICITEM_STYLE, e.path[0].naturalWidth, e.path[0].naturalHeight, index)
 }
 
-export const changeTimeout = ({dispatch}, e) => {
-	dispatch(types.CHANGE_TIMEOUT, e.target.value)
+export const changeDownloadPath = ({dispatch}, preDownloadPath) => {
+	const downloadPath = remote.dialog.showOpenDialog({
+		defaultPath: preDownloadPath,
+		properties: [ 'openDirectory', 'createDirectory' ]
+	})
+	//若选取了路径则修改，否则不变
+	downloadPath && dispatch(types.CHANGE_DOWNLOADPATH, downloadPath.toString())
+}
+
+export const selectPicItem = ({dispatch}, index) => {
+	dispatch(types.SELECT_PICITEM, index)
 }
 
 export const changeProxy = ({dispatch}, e) => {
@@ -26,59 +36,71 @@ export const changePassWord = ({dispatch}, e) => {
 }
 
 export const checkCookie = ({dispatch}) => {
-	const exists = ipcRenderer.send('existsCookie')
-	dispatch(types.CHECK_COOKIE, exists)
-}
-
-export const login = ({dispatch}, cookie) => {
-	ipcRenderer.send('setOption', {
-		'cookie': cookie
+	ipcRenderer.send('checkCookie-m')
+	ipcRenderer.once('checkCookie-r', (e, exists) => {
+		dispatch(types.CHECK_COOKIE, exists)
 	})
-	//返回登录结果
-    dispatch(types.LOGIN, true)
+}
+export const loginAsync = ({dispatch}, userinfo) => {
+	//必须解构，否则主线程接收到空对象
+	ipcRenderer.send('login-m', {
+		...userinfo
+	})
+	ipcRenderer.once('login-r', (e, logined) => {
+		dispatch(types.LOGIN, logined)
+	})
+}
+export const login = ({dispatch}, cookie) => {
+	ipcRenderer.send('setOption-m', {cookie})
+	dispatch(types.LOGIN, true)
 }
 
 export const setOption = ({dispatch}, option) => {
-	ipcRenderer.send('setOption', option)
+	ipcRenderer.send('setOption-m', {
+		...option
+	})
 	dispatch(types.SET_OPTION)
 }
 
-export const searchAsync = async ({dispatch}, authorId, refresh) => {
-	let picList = await ipcRenderer.send('getPicListFromCacheAsync', authorId)
-	//当本地缓存不存在或强制刷新时
-	if (!picList.length || refresh) {
-		picList = ipcRenderer.send('downloadThumbListAsync', authorId)
-	console.log(picList, authorId)
-		picList.forEach((v, i) => {
-			v.onProgress = (per) => progress(i, per)
-			v.onFinished = async () => {
-				const pic = await ipcRenderer.send('getPictrueFromCacheAsync', authorId, v.name)
-				dispatch(types.SEARCH, picList)
-				finished(i, pic)
-			}
-			v.onNotFound = () => notFound(i)
-		})
-	}
-}
-
-export const downloadPicListAsync = async ({dispatch}, authorId, picList) => {
-	picList = await ipcRenderer.send('downloadPicListAsync', authorId, picList)
-	picList.forEach((v, i) => {
-		v.onProgress = (per) => progress(i, per)
-		v.onFinished = () => finished(i)
-		v.onNotFound = () => notFound(i)
+export const searchAsync = ({dispatch}, authorId, refresh) => {
+	console.log(authorId)//45438&type=all&p=2
+	//获取缓存图片列表
+	ipcRenderer.send('getThumbListFromCache-m', authorId)
+	ipcRenderer.once('getThumbListFromCache-r', (e, picList) => {
+		//当本地缓存不存在或强制刷新时
+		if (!picList.length || refresh) {
+			//查找缩略图
+			ipcRenderer.send('getThumbListFromNet-m', authorId)
+			ipcRenderer.once('getThumbListFromNet-r', (e, picList) => {
+				thumbListFactory(picList)
+			})
+		} else {
+			thumbListFactory(picList)
+		}
 	})
-	dispatch(types.DOWNLOAD)
 }
 
-export const progress = () => {
-
+export const downloadPicListAsync = ({dispatch}, authorId, picList) => {
+	const newPicList = picList.filter(v => v.selected)
+	ipcRenderer.send('downloadPicList-m', authorId, JSON.parse(JSON.stringify(newPicList)))
 }
 
-export const finished = () => {
-
+//缩略图加工厂，添加必要的属性
+function thumbListFactory(picList) {
+	picList.forEach(v => {
+		v.selected = false
+		v.width = 0
+		v.height = 0
+	})
+	store.dispatch(types.SEARCH, picList)
 }
 
-export const notFound = () => {
+ipcRenderer.on('download-progress-r', (e, pic, per) => {
+	console.log('progress----', pic.name, per)
+})
 
-}
+ipcRenderer.on('download-finished-r', (e, pic) => {
+	console.log('finished----', pic.name)
+	if (pic.name.includes('master'))
+		store.dispatch(types.SEARCH, pic)
+})

@@ -1,16 +1,16 @@
 <template>
 	<div class="bg"></div>
-    <form method="post" class="option">
-        <div class="logo"></div>
-        <div class="form">
-            <div class="form-item clear-fix">
+	<form method="post" class="option">
+		<div class="logo"></div>
+		<div class="form">
+			<div class="form-item clear-fix">
 				<span>下载路径</span>
 				<span>{{info.downloadPath || '无'}}</span>
 				<span @click="changeDownloadPath(info.downloadPath)">...</span>
 			</div>
-        </div>
-		<a v-link="'search'" class="btn submit" @click="setOption(option)">设置</a>
-    </form>
+		</div>
+		<a v-link="'search'" class="btn submit" @click="setOption(info)">设置</a>
+	</form>
 </template>
 
 

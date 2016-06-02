@@ -1,4 +1,4 @@
-import Collection from 'main/models/Collection'
+import Collection from '../src/main/models/Collection'
 import fs from 'fs-extra-promise'
 import path from 'path'
 import chai from 'chai'

@@ -25,11 +25,13 @@ router.map({
 
 router.beforeEach(({to, next, redirect}) => {
 	//除login外，处于未登录状态时跳login
-	if (to.name !== 'login' && !router.app.logined) {
+	/*if (to.name !== 'login' && !router.app.logined) {
 		redirect('login')
 	} else {
 		next()
 	}
+	*/
+	next()
 })
 
 router.redirect({

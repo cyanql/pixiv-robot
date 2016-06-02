@@ -2,7 +2,7 @@
 	<div class="search clear-fix">
 		<div class="btn-group clear-fix">
 			<a class="btn" @click="searchAsync(authorId)">查找</a>
-			<a class="btn" @click="downloadPicListAsync(picList)">下载</a>
+			<a class="btn" @click="downloadPicListAsync(authorId, picList)">下载</a>
 		</div>
 		<div class="content clear-fix">
 			<label>作者ID</label>
@@ -12,17 +12,34 @@
 			>
 		</div>
 	</div>
-	<div v-for="picItem in picList" class="container">
-		<div class="item" style="{width: picItem.width * 200 / picItem.height + 'px', flexGrow: picItem.width * 200 / picItem.height}">
-			<i style="{paddingBottom: picItem.height / picItem.width * 100 + '%'}"></i>
-			<img :src="picItem.src" :alt="picItem.id">
+	<div class="container">
+		<div
+			v-for="picItem in picList"
+			:class="picItem.selected ? 'item-selected' : 'item'"
+			:style="{width: picItem.width * 200 / picItem.height + 'px', flexGrow: picItem.width * 200 / picItem.height}"
+			@click="selectPicItem($index)"
+			:track-by="$index"
+			>
+			<div :style="{paddingBottom: picItem.height / picItem.width * 100 + '%'}"></div>
+			<img :src="picItem.src" :alt="picItem.name" @load="changePicItemStyle($event, $index)">
+			<div class="loading-box">
+				<div class="loading-main">
+
+				</div>
+			</div>
 		</div>
 	</div>
+	<ring-alt progress=".5"></ring-alt>
+	<ripple></ripple>
 </template>
 
-<script>
+<script lang="babel">
 import store from 'renderer/vuex'
 import * as actions from 'renderer/vuex/actions'
+import Svg from 'renderer/components/Svg'
+//迷之不支持解构
+const RingAlt = Svg.RingAlt
+const Ripple = Svg.Ripple
 
 export default {
 	store,
@@ -32,7 +49,15 @@ export default {
 			picList: state => state.picList
 		},
 		actions
+	},
+	components: {
+		RingAlt,
+		Ripple
 	}
+	// validator: function(val) {
+	// 	console.log(val)
+	// 	return val < 10
+	// },
 }
 </script>
 
@@ -90,28 +115,62 @@ export default {
 	}
 }
 .container {
-    display: flex;
-    flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 
 	&:after {
-	    content: '';
-	    flex-grow: 999999999;
+		content: '';
+		flex-grow: 999999999;
 	}
 
-	& > .item {
-	    margin: 2px;
-	    background-color: violet;
-	    position: relative;
+	& > .item,
+	& > .item-selected {
+		margin: 2px;
+		box-shadow: 0 0 3px @shadow-color;
+		background-color: @main-color;
+		position: relative;
 
-		& > i {
-		    display: block;
-		}
 		& > img {
-		    position: absolute;
-		    top: 0;
-		    width: 100%;
-		    vertical-align: bottom;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			vertical-align: bottom;
+		}
+		&:hover {
+			box-shadow: 0 0 5px @main-color;
+		}
+	}
+
+	& > .item-selected {
+		&:after {
+			content: '\25C6';
+			position: absolute;
+			left: 0;
+			top: 0;
+			line-height: 1;
+			padding: 5px 15px 15px 8px;
+			background-color: @main-color;
+			color: white;
+			border-bottom-right-radius: 100%;
 		}
 	}
 }
+
+.loading-box {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& > .loading-main {
+		width: 50px;
+		height: 50px;
+		background-color: white;
+	}
+}
+
 </style>

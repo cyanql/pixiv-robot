@@ -16,10 +16,17 @@ class Picture {
 	get(prop) {
 		return this[`_${prop}`]
 	}
+	toJS() {
+		const json = {}
+		Object.keys(this).forEach(key => {
+			json[key.replace(/^_/, '')] = this[key]
+		})
+		return json
+	}
 	/**
 	 * 下载
 	 * @param {Object} option {
-	 *   headers,
+	 *   headers: { referer, cookie },
 	 *   proxy,
 	 *   path
 	 * }
@@ -40,7 +47,7 @@ class Picture {
 
 		//当返回状态为404
 		if (res && res.status == 404) {
-			this.onNotFound()
+			this.onNotFound(option)
 			throw new Error(`404:${this._src}`)
 		}
 
@@ -62,10 +69,10 @@ class Picture {
 			rs
 				.on('data', (chunk) => {
 					currentlen += chunk.length
-					this.onProgress((currentlen / maxlen * 100).toFixed(2) + '%')
+					this.onProgress((currentlen / maxlen).toFixed(2))
 				})
 				.on('error', (err) => {
-					console.log(`网络连接异常-${err}`)
+					this.onError(`网络连接异常-${err}`)
 				})
 
 			//写入流挂载完成、错误监听事件
@@ -75,7 +82,7 @@ class Picture {
 					resolve()
 				})
 				.on('error', (err) => {
-					console.log(`图片写入异常-${err}`)
+					this.onError(`图片写入异常-${err}`)
 				})
 
 			//管道连接
@@ -92,5 +99,16 @@ class Picture {
 		process.stdout.write(`${this._name} -- 下载进度 -- ${per}`)
 	}
 	onFinished() {}
-	onNotFound() {}
+	onNotFound(option) {
+		if (this._src.match(/\.jpg$/)) {
+			this._src = this._src.replace(/\.jpg$/, '.png')
+			this._name = this._name.replace(/\.jpg$/, '.png')
+			this.downloadAsync(option)
+		} else {
+			this.onError(`${this._name}图片类型不为(jpg|png)，请求失败`)
+		}
+	}
+	onError(err) {
+		console.error(err)
+	}
 }
