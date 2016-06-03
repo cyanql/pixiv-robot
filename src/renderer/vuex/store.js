@@ -3,6 +3,7 @@ import { remote } from 'electron'
 
 const state = {
 	logined: false,
+	loading: false,
 	info: {
 		username: 'pixivrobot@gmail.com',
 		password: 'pixiv123456',
@@ -19,6 +20,7 @@ const state = {
 		height: '',
 		type: '',
 		selected: false,
+		progress: 0
 	}*/]
 }
 
@@ -34,6 +36,15 @@ const mutations = {
 	},
 	[types.SET_OPTION] (state) {
 
+	},
+	[types.LOADING_START] (state) {
+		state.loading = true
+	},
+	[types.LOADING_END] (state) {
+		state.loading = false
+	},
+	[types.DOWNLOAD_PROGREE] (state, index, progress) {
+		state.picList[index].progress = progress
 	},
 	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
 		state.picList[index].width = width

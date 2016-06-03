@@ -53,6 +53,10 @@ class Pixiv {
 				...option
 			})
 
+			if (res.status > 300 || res.status < 200) {
+				throw new Error(`${res.status}`)
+			}
+
 			return res
 		} catch (err) {
 			throw err
@@ -88,7 +92,6 @@ class Pixiv {
 			this._headers = {
 				cookie: res.headers.getAll('set-cookie')
 			}
-
 			return res
 		} catch (err) {
 			console.error(`登陆失败--${err}`)

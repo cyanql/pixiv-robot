@@ -221,7 +221,8 @@ async function downloadAsync(picList, option, sender) {
 			name: v.src.match(/[^\/]*$/).toString()
 		})
 		const picJS = pic.toJS()
-		pic.onProgress = (per) => sender.send('download-progress-r', picJS, per)
+		picJS.index = v.index
+		pic.onProgress = (progree) => sender.send('download-progress-r', picJS, progree)
 		pic.onFinished = () => {
 			sender.send('download-finished-r', picJS)
 		}

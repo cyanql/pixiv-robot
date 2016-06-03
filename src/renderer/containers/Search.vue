@@ -22,15 +22,12 @@
 			>
 			<div :style="{paddingBottom: picItem.height / picItem.width * 100 + '%'}"></div>
 			<img :src="picItem.src" :alt="picItem.name" @load="changePicItemStyle($event, $index)">
-			<div class="loading-box">
-				<div class="loading-main">
-
-				</div>
+			<div class="progress-box">
+				<ring-alt :style="{display: picItem.progress > 0 ? 'block' : 'none'}" class="progress-main" :radius="30" :progress="picItem.progress" color2="rgba(0,0,0,.25)"></ring-alt>
 			</div>
 		</div>
 	</div>
-	<ring-alt progress=".5"></ring-alt>
-	<ripple></ripple>
+	<ripple class="loading" :style="{opacity: loading ? '1' : '0'}"></ripple>
 </template>
 
 <script lang="babel">
@@ -38,15 +35,16 @@ import store from 'renderer/vuex'
 import * as actions from 'renderer/vuex/actions'
 import Svg from 'renderer/components/Svg'
 //迷之不支持解构
-const RingAlt = Svg.RingAlt
 const Ripple = Svg.Ripple
+const RingAlt = Svg.RingAlt
 
 export default {
 	store,
 	vuex: {
 		getters: {
 			authorId: state => state.authorId,
-			picList: state => state.picList
+			picList: state => state.picList,
+			loading: state => state.loading
 		},
 		actions
 	},
@@ -120,7 +118,7 @@ export default {
 
 	&:after {
 		content: '';
-		flex-grow: 999999999;
+		// flex-grow: 999999999;
 	}
 
 	& > .item,
@@ -156,7 +154,7 @@ export default {
 	}
 }
 
-.loading-box {
+.progress-box {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -166,11 +164,24 @@ export default {
 	align-items: center;
 	justify-content: center;
 
-	& > .loading-main {
+	& > .progress-main {
+		position: absolute;
+		right: 0;
+		bottom: 0;
 		width: 50px;
 		height: 50px;
-		background-color: white;
+		border-radius: 50%;
+		background-color: rgba(0,0,0,.25);
 	}
 }
-
+.loading {
+	display: block;
+	position: fixed;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	margin-top: 200px;
+	transition: opacity 1s ease;
+	opacity: 0;
+}
 </style>

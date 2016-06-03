@@ -64,6 +64,8 @@ export const setOption = ({dispatch}, option) => {
 
 export const searchAsync = ({dispatch}, authorId, refresh) => {
 	console.log(authorId)//45438&type=all&p=2
+
+	dispatch(types.LOADING_START)
 	//获取缓存图片列表
 	ipcRenderer.send('getThumbListFromCache-m', authorId)
 	ipcRenderer.once('getThumbListFromCache-r', (e, picList) => {
@@ -81,7 +83,11 @@ export const searchAsync = ({dispatch}, authorId, refresh) => {
 }
 
 export const downloadPicListAsync = ({dispatch}, authorId, picList) => {
-	const newPicList = picList.filter(v => v.selected)
+	//发送前写入编号
+	const newPicList = picList.map((v, i) => {
+		v.index = i
+		return v
+	}).filter(v => v.selected)
 	ipcRenderer.send('downloadPicList-m', authorId, JSON.parse(JSON.stringify(newPicList)))
 }
 
@@ -91,12 +97,15 @@ function thumbListFactory(picList) {
 		v.selected = false
 		v.width = 0
 		v.height = 0
+		v.progress = 0
 	})
+	store.dispatch(types.LOADING_END)
 	store.dispatch(types.SEARCH, picList)
 }
 
-ipcRenderer.on('download-progress-r', (e, pic, per) => {
-	console.log('progress----', pic.name, per)
+ipcRenderer.on('download-progress-r', (e, pic, progress) => {
+	//获取带有编号的图片
+	store.dispatch(types.DOWNLOAD_PROGREE, pic.index, progress)
 })
 
 ipcRenderer.on('download-finished-r', (e, pic) => {

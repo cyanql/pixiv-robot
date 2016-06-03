@@ -5,10 +5,11 @@
 		<div class="form">
 			<input class="user" type="text" @input="changeUserName" :value="info.username" placeholder="username">
 			<input class="pass" type="password" @input="changePassWord" :value="info.password" placeholder="password">
-            <input type="text" @input="changeProxy" :value="info.proxy" placeholder="代理（选填）">
+			<input type="text" @input="changeProxy" :value="info.proxy" placeholder="代理（选填）">
 		</div>
 		<a  class="btn submit" @click="loginAsync(info)">登陆</a>
 	</div>
+	<ripple></ripple>
 	<!-- <webview id="webview" src="https://www.pixiv.net" ></webview> -->
 </template>
 
@@ -16,6 +17,9 @@
 <script>
 import store from 'renderer/vuex'
 import * as actions from 'renderer/vuex/actions'
+import Svg from 'renderer/components/Svg'
+//迷之不支持解构
+const Ripple = Svg.Ripple
 
 export default {
 	store,
