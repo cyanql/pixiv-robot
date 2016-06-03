@@ -116,10 +116,13 @@ ipcMain.on('getThumbListFromNet-m', async (e, authorId) => {
 			referer: Pixiv.HOST
 		}
 	}
-
-	//解析页面，并查询图片元素
-	await pixiv.queryPictureAsync(option)
-
+	try {
+		//解析页面，并查询图片元素
+		await pixiv.queryPictureAsync(option)
+	} catch (err) {
+		if (err.includes('[redirect]'))
+			return e.sender.send('login-timeout')
+	}
 	//创建下载路径，并下载
 	const thumbnailPath = path.join(userinfo.get('cachePath'), authorId, 'thumbnail.json')
 

@@ -31,6 +31,9 @@ const mutations = {
 	[types.LOGIN] (state, logined) {
 		state.logined = logined
 	},
+	[types.LOGIN_TIMEOUT] (state) {
+		
+	},
 	[types.SEARCH] (state, picList) {
 		state.picList = state.picList.concat(picList)
 	},

@@ -1,0 +1,113 @@
+{
+	"url": "http://www.pixiv.net/member.php?id=45438",
+	"status": 200,
+	"statusText": "OK",
+	"headers": {
+		"_headers": {
+			"server": [
+				"nginx"
+			],
+			"date": [
+				"Fri, 03 Jun 2016 17:00:53 GMT"
+			],
+			"content-type": [
+				"text/html; charset=UTF-8"
+			],
+			"content-length": [
+				"9643"
+			],
+			"connection": [
+				"close"
+			],
+			"x-host-time": [
+				"142"
+			],
+			"expires": [
+				"Thu, 19 Nov 1981 08:52:00 GMT"
+			],
+			"cache-control": [
+				"no-store, no-cache, must-revalidate, post-check=0, pre-check=0"
+			],
+			"pragma": [
+				"no-cache"
+			],
+			"set-cookie": [
+				"p_ab_id=5; expires=Thu, 03-Jun-2021 17:00:53 GMT; Max-Age=157766400; path=/; domain=.pixiv.net",
+				"p_ab_id=5; expires=Thu, 03-Jun-2021 17:00:53 GMT; Max-Age=157766400; path=/; domain=.pixiv.net"
+			],
+			"vary": [
+				"Accept-Encoding"
+			],
+			"content-encoding": [
+				"gzip"
+			],
+			"x-frame-options": [
+				"SAMEORIGIN"
+			]
+		}
+	},
+	"ok": true,
+	"body": {
+		"_opts": {},
+		"_chunkSize": 16384,
+		"_readableState": {
+			"objectMode": false,
+			"highWaterMark": 16384,
+			"buffer": [],
+			"length": 0,
+			"pipes": null,
+			"pipesCount": 0,
+			"flowing": true,
+			"ended": false,
+			"endEmitted": false,
+			"reading": true,
+			"sync": false,
+			"needReadable": true,
+			"emittedReadable": false,
+			"readableListening": false,
+			"resumeScheduled": false,
+			"defaultEncoding": "utf8",
+			"ranOut": false,
+			"awaitDrain": 0,
+			"readingMore": false,
+			"decoder": null,
+			"encoding": null
+		},
+		"readable": true,
+		"domain": null,
+		"_events": {
+			"end": [
+				null,
+				null,
+				null
+			],
+			"error": [
+				null,
+				null
+			]
+		},
+		"_eventsCount": 8,
+		"_writableState": {
+			"objectMode": false,
+			"highWaterMark": 16384,
+			"needDrain": false,
+			"ending": true,
+			"ended": true,
+			"finished": false,
+			"decodeStrings": true,
+			"defaultEncoding": "utf8",
+			"length": 9643,
+			"writing": true,
+			"corked": 0,
+			"sync": false,
+			"bufferProcessing": false,
+			"writelen": 6445,
+			"bufferedRequest": {
+				"chunk": {
+					"type": "Buffer",
+					"data": [
+							]
+	}],
+	"_abort": false,
+	"_bytes": 16384
+}

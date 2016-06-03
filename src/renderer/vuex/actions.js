@@ -113,3 +113,9 @@ ipcRenderer.on('download-finished-r', (e, pic) => {
 	if (pic.name.includes('master'))
 		store.dispatch(types.SEARCH, pic)
 })
+
+ipcRenderer.on('login-timeout', () => {
+	console.log('cookie过期')
+	store.dispatch(types.LOGIN_TIMEOUT)
+	store.dispatch(types.LOADING_END)
+})

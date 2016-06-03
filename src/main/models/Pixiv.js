@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import ProxyAgent from 'https-proxy-agent'
 import Collection from './Collection'
-
+import fs from 'fs-extra-promise'
 
 export default
 class Pixiv {
@@ -53,8 +53,8 @@ class Pixiv {
 				...option
 			})
 
-			if (res.status > 300 || res.status < 200) {
-				throw new Error(`${res.status}`)
+			if (res.url !== url) {
+				throw new Error(`[redirect]网址重定向至${res.url}`)
 			}
 
 			return res
@@ -131,7 +131,7 @@ class Pixiv {
 			const href = collect.parseNextPage()
 			this._nextPage = option.url.split('?')[0] + href
 		} catch (err) {
-			return console.error(`作品页面解析失败--${err}`)
+			throw `作品页面解析失败--${err}`
 		}
 
 
@@ -148,7 +148,7 @@ class Pixiv {
 
 				this._picList = this._picList.concat(list)
 			} catch (err) {
-				return console.error(`相册页面解析失败--${err}`)
+				throw `相册页面解析失败--${err}`
 			}
 		}
 
