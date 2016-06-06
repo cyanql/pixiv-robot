@@ -7,9 +7,8 @@
 			<input class="pass" type="password" @input="changePassWord" :value="info.password" placeholder="password">
 			<input type="text" @input="changeProxy" :value="info.proxy" placeholder="代理（选填）">
 		</div>
-		<a  class="btn submit" @click="loginAsync(info)">登陆</a>
+		<a class="btn submit" @click="loginAsync(info)">登录</a>
 	</div>
-	<ripple></ripple>
 	<!-- <webview id="webview" src="https://www.pixiv.net" ></webview> -->
 </template>
 
@@ -30,13 +29,8 @@ export default {
 		},
 		actions
 	},
-	route: {
-
-	},
-	compiled() {
-		this.$watch('logined', () => {
-			this.logined && this.$router.go('setting')
-		})
+	components: {
+		Ripple
 	},
 	ready() {
 		// const webview = document.getElementById('webview')

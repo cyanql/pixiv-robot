@@ -1,11 +1,17 @@
 {
-  "name": "pixiv-robot",
+  "name": "PixivRobot",
   "version": "2.0.0",
-  "main": "./src/index.js",
+  "main": "./main/index.js",
   "scripts": {
-	"dev": "npm run browser & npm run electron",
-	"browser": "NODE_ENV=development webpack-dev-server --hot --inline --color --host 0.0.0.0 --port 3000",
-	"electron": "NODE_PATH=./src NODE_ENV=development electron -r babel-register ./src/index.js",
+	"prod": "npm run build && npm run pack:osx",
+	"pack:osx": "cp ./package.json ./build && electron-packager ./build PixivRobot --platform=darwin --arch=x64 --out=./prod --overwrite",
+	"pack:win": "cp ./package.json ./build && electron-packager ./build PixivRobot --platform=win32 --arch=x64 --out=./prod --overwrite",
+	"build": "npm run build:renderer && npm run build:main",
+	"build:renderer": "NODE_ENV=production webpack --profile --progress --config ./webpack.config.renderer.js",
+	"build:main": "NODE_ENV=production webpack --config ./webpack.config.main.js",
+	"dev": "npm run dev:renderer & npm run dev:main",
+	"dev:renderer": "NODE_ENV=development webpack-dev-server --hot --inline --color --host 0.0.0.0 --port 3000 --config ./webpack.config.renderer.js",
+	"dev:main": "NODE_ENV=development electron -r babel-register ./src/main/index.js",
 	"test": "mocha --compilers js:babel-core/register -R spec ",
 	"test:watch": "mocha --compilers js:babel-core/register -R spec --watch",
 	"test:cover": "babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha"
@@ -15,6 +21,8 @@
 	"https-proxy-agent": "^1.0.0",
 	"image-size": "^0.5.0",
 	"isomorphic-fetch": "^2.2.1",
+	"keen-ui": "^0.8.8",
+	"material-design-icons": "^2.2.3",
 	"vue": "^1.0.24",
 	"vue-router": "^0.7.13",
 	"vuex": "^0.6.3"
@@ -32,9 +40,9 @@
 	"babel-runtime": "^6.6.1",
 	"chai": "^3.5.0",
 	"css-loader": "^0.23.1",
-	"electron-packager": "^7.0.1",
+	"electron-builder": "^4.2.3",
+	"electron-packager": "^7.0.3",
 	"electron-prebuilt": "^0.37.8",
-	"electron-reload": "^1.0.0",
 	"eslint": "^2.9.0",
 	"extract-text-webpack-plugin": "^1.0.1",
 	"file-loader": "^0.8.5",
@@ -57,7 +65,7 @@
   },
   "repository": {
 	"type": "git",
-	"url": "git+https://github.com/Keyves/PixivSpider.git"
+	"url": "git+https://github.com/Keyves/pixiv-robot.git"
   },
   "keywords": [
 	"electron",
@@ -67,7 +75,7 @@
   "author": "keyves",
   "license": "ISC",
   "bugs": {
-	"url": "https://github.com/Keyves/PixivSpider/issues"
+	"url": "https://github.com/Keyves/pixiv-robot/issues"
   },
-  "homepage": "https://github.com/Keyves/PixivSpider#readme"
+  "homepage": "https://github.com/Keyves/pixiv-robot#readme"
 }

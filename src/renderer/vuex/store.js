@@ -2,13 +2,19 @@ import * as types from './types'
 import { remote } from 'electron'
 
 const state = {
-	logined: false,
+	logined: true,
 	loading: false,
+	snack: {
+		message: '',
+		action: '',
+		actionColor: '',
+		duration: 2000
+	},
 	info: {
 		username: 'pixivrobot@gmail.com',
 		password: 'pixiv123456',
 		proxy: 'http://127.0.0.1:8787',
-		downloadPath: remote.app.getPath('pictures')
+		downloadPath: ''
 	},
 	authorId: '45438&type=all&p=2',
 	picList: [
@@ -21,44 +27,58 @@ const state = {
 		type: '',
 		selected: false,
 		progress: 0
-	}*/]
+	}*/
+	]
 }
 
-const mutations = {
-	[types.CHECK_COOKIE] (state, exists){
-		state.logined = exists
+const baseMutations = {
+	[types.GET_USER_INFO] (state, userinfo){
+		console.log(userinfo)
+		if (!userinfo.cookie)
+			state.logined = false
+		state.info = Object.assign(state.info, userinfo)
 	},
 	[types.LOGIN] (state, logined) {
 		state.logined = logined
 	},
 	[types.LOGIN_TIMEOUT] (state) {
-		
+		state.logined = false
 	},
-	[types.SEARCH] (state, picList) {
-		state.picList = state.picList.concat(picList)
+	[types.SEARCH_PICTURE] (state, picture) {
+		state.picList = state.picList.push(picture)
+	},
+	[types.SEARCH_PICLIST] (state, picList) {
+		state.picList = picList
+	},
+	[types.DOWNLOAD] (state) {
+
 	},
 	[types.SET_OPTION] (state) {
 
+	},
+	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
+		state.picList[index].width = width
+		state.picList[index].height = height
+	}
+}
+
+const statusMutations = {
+	[types.CHANGE_PICITEM_PROGREE] (state, index, progress) {
+		state.picList[index].progress = progress
+	},
+	[types.SELECT_PICITEM] (state, index) {
+		state.picList[index].selected = !state.picList[index].selected
 	},
 	[types.LOADING_START] (state) {
 		state.loading = true
 	},
 	[types.LOADING_END] (state) {
 		state.loading = false
-	},
-	[types.DOWNLOAD_PROGREE] (state, index, progress) {
-		state.picList[index].progress = progress
-	},
-	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
-		state.picList[index].width = width
-		state.picList[index].height = height
-	},
-	[types.SELECT_PICITEM] (state, index) {
-		state.picList[index].selected = !state.picList[index].selected
-	},
-	[types.DOWNLOAD] (state) {
+	}
+}
 
-	},
+
+const inputMutations = {
 	[types.CHANGE_AUTHORID] (state, value) {
 		// if (!/^\d+$/.test(value))
 		// 	return
@@ -66,9 +86,6 @@ const mutations = {
 	},
 	[types.CHANGE_DOWNLOADPATH] (state, value) {
 		state.info.downloadPath = value
-	},
-	[types.CHANGE_TIMEOUT] (state, value) {
-		state.info.timeout = value
 	},
 	[types.CHANGE_PROXY] (state, value) {
 		state.info.proxy = value
@@ -81,7 +98,13 @@ const mutations = {
 	}
 }
 
+
+
 export default {
 	state,
-	mutations
+	mutations: {
+		...baseMutations,
+		...statusMutations,
+		...inputMutations
+	}
 }

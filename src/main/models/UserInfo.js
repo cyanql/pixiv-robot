@@ -11,12 +11,19 @@ class UserInfo {
 			_proxy: '',
 			_downloadPath: '',
 			_cachePath: path.join(process.cwd(), 'cache'),
-			_filename: 'userinfo.json'
+			_filename: 'UserInfo.json'
 		})
 
 		Object.keys(option).forEach(key => {
 			this[`_${key}`] = option[key]
 		})
+	}
+	toJS() {
+		const json = {}
+		Object.keys(this).forEach(key => {
+			json[key.replace(/^_/, '')] = this[key]
+		})
+		return json
 	}
 	/**
 	 * 更新属性的值

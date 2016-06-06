@@ -3,6 +3,10 @@ import ProxyAgent from 'https-proxy-agent'
 import Collection from './Collection'
 import fs from 'fs-extra-promise'
 
+function pathParse(url) {
+	return url.split('://').slice(1).toString()
+}
+
 export default
 class Pixiv {
 	static HOST = 'https://www.pixiv.net'
@@ -53,8 +57,8 @@ class Pixiv {
 				...option
 			})
 
-			if (res.url !== url) {
-				throw new Error(`[redirect]网址重定向至${res.url}`)
+			if (pathParse(res.url) !== pathParse(url)) {
+				throw new Error(`[redirect]${url}重定向至${res.url}`)
 			}
 
 			return res
@@ -94,7 +98,7 @@ class Pixiv {
 			}
 			return res
 		} catch (err) {
-			console.error(`登陆失败--${err}`)
+			throw `登陆失败--${err}`
 		}
 	}
 	/**

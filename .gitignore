@@ -3,3 +3,5 @@ node_modules
 download
 cache
 coverage
+prod
+build

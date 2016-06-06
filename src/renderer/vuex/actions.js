@@ -35,30 +35,33 @@ export const changePassWord = ({dispatch}, e) => {
 	dispatch(types.CHANGE_PASS_WORD, e.target.value)
 }
 
-export const checkCookie = ({dispatch}) => {
-	ipcRenderer.send('checkCookie-m')
-	ipcRenderer.once('checkCookie-r', (e, exists) => {
-		dispatch(types.CHECK_COOKIE, exists)
+export const getUserInfo = ({dispatch}) => {
+	ipcRenderer.send('get-userinfo-m')
+	ipcRenderer.once('get-userinfo-r', (e, userinfo) => {
+		console.log(userinfo, 'userinfo')
+		userinfo && dispatch(types.GET_USER_INFO, userinfo)
 	})
 }
+
+
 export const loginAsync = ({dispatch}, userinfo) => {
+	console.log({...userinfo})
+
+	dispatch(types.LOADING_START)
 	//必须解构，否则主线程接收到空对象
-	ipcRenderer.send('login-m', {
-		...userinfo
-	})
+	ipcRenderer.send('login-m', {...userinfo})
 	ipcRenderer.once('login-r', (e, logined) => {
 		dispatch(types.LOGIN, logined)
+		dispatch(types.LOADING_END)
 	})
 }
 export const login = ({dispatch}, cookie) => {
-	ipcRenderer.send('setOption-m', {cookie})
+	ipcRenderer.send('set-option-m', {cookie})
 	dispatch(types.LOGIN, true)
 }
 
 export const setOption = ({dispatch}, option) => {
-	ipcRenderer.send('setOption-m', {
-		...option
-	})
+	ipcRenderer.send('set-option-m', {...option})
 	dispatch(types.SET_OPTION)
 }
 
@@ -67,13 +70,13 @@ export const searchAsync = ({dispatch}, authorId, refresh) => {
 
 	dispatch(types.LOADING_START)
 	//获取缓存图片列表
-	ipcRenderer.send('getThumbListFromCache-m', authorId)
-	ipcRenderer.once('getThumbListFromCache-r', (e, picList) => {
+	ipcRenderer.send('get-thumbList-from-cache-m', authorId)
+	ipcRenderer.once('get-thumbList-from-cache-r', (e, picList) => {
 		//当本地缓存不存在或强制刷新时
 		if (!picList.length || refresh) {
 			//查找缩略图
-			ipcRenderer.send('getThumbListFromNet-m', authorId)
-			ipcRenderer.once('getThumbListFromNet-r', (e, picList) => {
+			ipcRenderer.send('get-thumbList-from-net-m', authorId)
+			ipcRenderer.once('get-thumbList-from-net-r', (e, picList) => {
 				thumbListFactory(picList)
 			})
 		} else {
@@ -83,12 +86,14 @@ export const searchAsync = ({dispatch}, authorId, refresh) => {
 }
 
 export const downloadPicListAsync = ({dispatch}, authorId, picList) => {
+	if (!picList.length)
+		return
 	//发送前写入编号
 	const newPicList = picList.map((v, i) => {
 		v.index = i
 		return v
 	}).filter(v => v.selected)
-	ipcRenderer.send('downloadPicList-m', authorId, JSON.parse(JSON.stringify(newPicList)))
+	ipcRenderer.send('download-picList-m', authorId, JSON.parse(JSON.stringify(newPicList)))
 }
 
 //缩略图加工厂，添加必要的属性
@@ -100,18 +105,18 @@ function thumbListFactory(picList) {
 		v.progress = 0
 	})
 	store.dispatch(types.LOADING_END)
-	store.dispatch(types.SEARCH, picList)
+	store.dispatch(types.SEARCH_PICLIST, picList)
 }
 
 ipcRenderer.on('download-progress-r', (e, pic, progress) => {
 	//获取带有编号的图片
-	store.dispatch(types.DOWNLOAD_PROGREE, pic.index, progress)
+	store.dispatch(types.CHANGE_PICITEM_PROGREE, pic.index, progress)
 })
 
 ipcRenderer.on('download-finished-r', (e, pic) => {
 	console.log('finished----', pic.name)
 	if (pic.name.includes('master'))
-		store.dispatch(types.SEARCH, pic)
+		store.dispatch(types.SEARCH_PICTURE, pic)
 })
 
 ipcRenderer.on('login-timeout', () => {

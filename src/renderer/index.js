@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import App from 'renderer/containers/App'
 import VueRouter from 'vue-router'
+import 'material-design-icons'
+import 'keen-ui/dist/keen-ui.css'
+import KeenUI from 'keen-ui'
 
 Vue.config.debug = true
 
 Vue.use(VueRouter)
+Vue.use(KeenUI)
 
 const router = new VueRouter()
 
@@ -24,13 +28,6 @@ router.map({
 })
 
 router.beforeEach(({to, next, redirect}) => {
-	//除login外，处于未登录状态时跳login
-	/*if (to.name !== 'login' && !router.app.logined) {
-		redirect('login')
-	} else {
-		next()
-	}
-	*/
 	next()
 })
 

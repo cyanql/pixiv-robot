@@ -27,7 +27,7 @@
 			</div>
 		</div>
 	</div>
-	<ripple class="loading" :style="{opacity: loading ? '1' : '0'}"></ripple>
+	<!-- <ripple class="loading" :style="{opacity: loading ? '1' : '0'}"></ripple> -->
 </template>
 
 <script lang="babel">
@@ -43,8 +43,7 @@ export default {
 	vuex: {
 		getters: {
 			authorId: state => state.authorId,
-			picList: state => state.picList,
-			loading: state => state.loading
+			picList: state => state.picList
 		},
 		actions
 	},
@@ -118,7 +117,7 @@ export default {
 
 	&:after {
 		content: '';
-		// flex-grow: 999999999;
+		flex-grow: 999999999;
 	}
 
 	& > .item,
@@ -173,16 +172,5 @@ export default {
 		border-radius: 50%;
 		background-color: rgba(0,0,0,.25);
 	}
-}
-.loading {
-	display: block;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	margin: 0 auto;
-	margin-top: 200px;
-	transition: opacity 1s ease;
-	opacity: 0;
 }
 </style>
