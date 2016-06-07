@@ -11,6 +11,6 @@
 1. proxy supports(使用移动宽带的小伙伴需设置此项，代理软件请戳这里->[Lantern](https://github.com/getlantern/lantern))
 
 ## Screenshot
-![Screenshot](https://raw.githubusercontent.com/Keyves/colorful-dark-syntax/master/assets/screenshot.png)
+![Screenshot](https://github.com/Keyves/pixiv-robot/blob/master/assets/screenshot.png)
 
 ## [CHANGELOG](https://github.com/Keyves/pixiv-robot/blob/master/CHANGELOG.md)
