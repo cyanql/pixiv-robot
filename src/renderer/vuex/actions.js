@@ -43,10 +43,14 @@ export const getUserInfo = ({dispatch}) => {
 	})
 }
 
+export const logoutAsync = ({dispatch}) => {
+	ipcRenderer.send('logout-m')
+	ipcRenderer.once('logout-r', (e, err) => {
+		!err && dispatch(types.LOGOUT)
+	})
+}
 
 export const loginAsync = ({dispatch}, userinfo) => {
-	console.log({...userinfo})
-
 	dispatch(types.LOADING_START)
 	//必须解构，否则主线程接收到空对象
 	ipcRenderer.send('login-m', {...userinfo})
@@ -55,19 +59,22 @@ export const loginAsync = ({dispatch}, userinfo) => {
 		dispatch(types.LOADING_END)
 	})
 }
-export const login = ({dispatch}, cookie) => {
+
+export const authorizeLoginAsync = ({dispatch}, cookie) => {
 	ipcRenderer.send('set-option-m', {cookie})
-	dispatch(types.LOGIN, true)
+	ipcRenderer.once('set-option-r', () => {
+		dispatch(types.LOGIN, true)
+	})
 }
 
 export const setOption = ({dispatch}, option) => {
 	ipcRenderer.send('set-option-m', {...option})
-	dispatch(types.SET_OPTION)
+	ipcRenderer.once('set-option-r', () => {
+		dispatch(types.SET_OPTION)
+	})
 }
 
 export const searchAsync = ({dispatch}, authorId, refresh) => {
-	console.log(authorId)//45438&type=all&p=2
-
 	dispatch(types.LOADING_START)
 	//获取缓存图片列表
 	ipcRenderer.send('get-thumbList-from-cache-m', authorId)
@@ -96,11 +103,16 @@ export const downloadPicListAsync = ({dispatch}, authorId, picList) => {
 	ipcRenderer.send('download-picList-m', authorId, JSON.parse(JSON.stringify(newPicList)))
 }
 
+export const addSnack = ({dispatch}, option) => {
+	dispatch(types.ADD_SNACK, option)
+}
+
+
 //缩略图加工厂，添加必要的属性
 function thumbListFactory(picList) {
 	picList.forEach(v => {
 		v.selected = false
-		v.width = 0
+		v.width = 150
 		v.height = 0
 		v.progress = 0
 	})

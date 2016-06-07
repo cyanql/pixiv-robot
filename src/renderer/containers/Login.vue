@@ -1,5 +1,4 @@
 <template>
-	<div class="bg"></div>
 	<div class="option">
 		<div class="logo"></div>
 		<div class="form">
@@ -9,7 +8,6 @@
 		</div>
 		<a class="btn submit" @click="loginAsync(info)">登录</a>
 	</div>
-	<!-- <webview id="webview" src="https://www.pixiv.net" ></webview> -->
 </template>
 
 
@@ -32,6 +30,12 @@ export default {
 	components: {
 		Ripple
 	},
+	route: {
+		activate: function (transition) {
+			console.log('hook-example activated!')
+			transition.next()
+		}
+	},
 	ready() {
 		// const webview = document.getElementById('webview')
 		// webview.addEventListener('dom-ready', () => {
@@ -51,14 +55,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="less">
-	#webview {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		min-width: 600px;
-	}
-</style>

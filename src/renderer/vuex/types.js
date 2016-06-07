@@ -1,4 +1,5 @@
 export const LOGIN = 'LOGIN'
+export const LOGOUT = 'LOGOUT'
 export const LOGIN_TIMEOUT = 'LOGIN_TIMEOUT'
 export const GET_USER_INFO = 'GET_USER_INFO'
 
@@ -29,3 +30,6 @@ export const CHANGE_PICITEM_PROGREE = 'CHANGE_PICITEM_PROGREE'
 
 export const LOADING_START = 'LOADING_START'
 export const LOADING_END = 'LOADING_END'
+
+
+export const ADD_SNACK = 'ADD_SNACK'

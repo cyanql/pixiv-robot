@@ -1,6 +1,6 @@
 {
   "name": "PixivRobot",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "./main/index.js",
   "scripts": {
 	"prod": "npm run build && npm run pack:osx",
@@ -42,7 +42,7 @@
 	"css-loader": "^0.23.1",
 	"electron-builder": "^4.2.3",
 	"electron-packager": "^7.0.3",
-	"electron-prebuilt": "^0.37.8",
+	"electron-prebuilt": "^1.2.1",
 	"eslint": "^2.9.0",
 	"extract-text-webpack-plugin": "^1.0.1",
 	"file-loader": "^0.8.5",

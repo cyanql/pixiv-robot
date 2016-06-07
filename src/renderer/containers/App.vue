@@ -1,8 +1,9 @@
 <template>
-	<ui-toolbar type="clear" text-color="black" title="Login" brand="    PixivBot" :loading="loading" hideNavIcon preloader-top show-brand flat>
+	<ui-toolbar type="default" text-color="black" :title="title" :loading="loading" hide-nav-icon show-brand>
 		<div slot="actions">
-			<ui-icon-button type="clear" color="black" icon="arrow_back" @click="goBack"></ui-icon-button>
-			<ui-icon-button type="clear" color="black" icon="more_vert" :menu-options="menu" has-dropdown-menu dropdown-position="bottom right" @menu-option-selected="switchPage"></ui-icon-button>
+			<ui-icon-button type="clear" color="black" icon="search" @click="switchPage('search')" :disabled="!logined"></ui-icon-button>
+			<ui-icon-button type="clear" color="black" icon="account_circle" :menu-options="menu" @menu-option-selected="menuOptionSelected" dropdown-position="bottom right" has-dropdown-menu show-menu-icons></ui-icon-button>
+			<ui-icon-button type="clear" color="black" icon="settings" @click="switchPage('setting')"></ui-icon-button>
 		</div>
 	</ui-toolbar>
 	<router-view></router-view>
@@ -22,12 +23,35 @@ export default {
 		},
 		actions
 	},
-	data() {
-		return {
-			menu: [{
-				id: 'setting',
-				text: 'Setting'
+	computed: {
+		menu() {
+			console.log(this.logined)
+			return [{
+				route: 'login',
+				icon: 'compare_arrows',
+				id: 'switch_account',
+				text: '切换账号'
+			}, {
+				route: 'authorize',
+				icon: 'http',
+				id: 'authorize',
+				text: '网页登录',
+				disabled: this.logined
+			}, {
+				route: 'clear_cache',
+				icon: 'delete',
+				id: '',
+				text: '清除缓存',
+				disabled: true
+			}, {
+				route: 'login',
+				icon: 'exit_to_app',
+				id: 'logout',
+				text: '注销账号'
 			}]
+		},
+		title() {
+			return this.$route.name.replace(/^\w/, (val) => val.toUpperCase())
 		}
 	},
 	created() {
@@ -40,21 +64,27 @@ export default {
 			}
 		})
 		this.$watch('snack', (snack) => {
+			console.log(snack)
 			this.$broadcast('ui-snackbar::create', snack)
 		})
 	},
 	methods: {
-		switchPage(result) {
-			this.$router.go(result.id)
+		menuOptionSelected(result) {
+			switch (result.id) {
+				case 'logout':
+					this.logoutAsync()
+					break
+				case 'clear_cache':
+					const ctx = require('remote').getCurrentWindow().webContents
+					ctx.session.clearCache((err) => { console.log(err) })
+					break
+				default:
+					break
+			}
+			this.$router.go(result.route)
 		},
-		goBack() {
-			window.history.back()
-		}
-	},
-	route: {
-		activate: function (transition) {
-			console.log('hook-example activated!')
-			transition.next()
+		switchPage(target) {
+			this.$router.go(target)
 		}
 	}
 }
@@ -74,7 +104,8 @@ body,select,dd,dl,dt,li,ol,ul,span,div,form,h1,h2,h3,h4,h5,h6,hr,p,a,button,inpu
 }
 body {
 	min-width: 600px;
-	overflow: hidden;
+	background-image: -webkit-radial-gradient(circle,#46c463 0%,#2db861 100%);
+	background-image:         radial-gradient(circle,#46c463 0%,#2db861 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#46c463', endColorstr='#2db861',GradientType=0 );
 }
 li {list-style: none;}
 
@@ -90,12 +121,8 @@ input[type="file"] {
 }
 
 .option {
-	position: absolute;
-	top: 15%;
-	left: 0;
-	right: 0;
 	width: @width;
-	margin: 0 auto;
+	margin: 100px auto 0 auto;
 
 	& > .logo {
 		height: @logo-height;
@@ -151,14 +178,6 @@ input[type="file"] {
 	}
 }
 
-.bg {
-	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 100%;
-	background-image: -webkit-radial-gradient(circle,#46c463 0%,#2db861 100%);
-	background-image:         radial-gradient(circle,#46c463 0%,#2db861 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#46c463', endColorstr='#2db861',GradientType=0 );
-}
 
 .loading {
 	display: block;

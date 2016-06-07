@@ -33,13 +33,15 @@ const state = {
 
 const baseMutations = {
 	[types.GET_USER_INFO] (state, userinfo){
-		console.log(userinfo)
 		if (!userinfo.cookie)
 			state.logined = false
-		state.info = Object.assign(state.info, userinfo)
+		state.info = Object.assign({}, state.info, userinfo)
 	},
 	[types.LOGIN] (state, logined) {
 		state.logined = logined
+	},
+	[types.LOGOUT] (state) {
+		state.logined = false
 	},
 	[types.LOGIN_TIMEOUT] (state) {
 		state.logined = false
@@ -59,6 +61,10 @@ const baseMutations = {
 	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
 		state.picList[index].width = width
 		state.picList[index].height = height
+	},
+	[types.ADD_SNACK] (state, option) {
+		//option为新添加，可以不解构也能触发响应
+		state.snack = Object.assign({}, state.snack, option)
 	}
 }
 

@@ -12,7 +12,7 @@ const config = {
 		index: ['./src/renderer/index.js']
 	},
 	devServer: {
-		publicPath: '/build/renderer'
+		publicPath: '/build/renderer/'
 	},
 	output: {
 		path: BUILD_PATH, //编译后文件存放路径

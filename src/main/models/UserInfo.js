@@ -64,7 +64,7 @@ class UserInfo {
 			const json = fs.readJsonSync(pathname, {throw: false})
 			Object.assign(this, json)
 		} catch (err) {
-			console.error(`loadFromLocalAsync fail-${err}`)
+			throw `loadFromLocalAsync fail-${err}`
 		}
 	}
 	/**
@@ -75,7 +75,19 @@ class UserInfo {
 		try {
 			fs.outputJsonSync(pathname, this)
 		} catch (err) {
-			console.error(`saveToLocalAsync fail-${err}`)
+			throw `saveToLocalAsync fail-${err}`
+		}
+	}
+
+	/**
+	 * 从本地删除
+	 * @param  {[string]} pathname 路径+文件名
+	 */
+	clearLocal(pathname = path.join(this._cachePath, this._filename)) {
+		try {
+			fs.removeSync(pathname)
+		} catch (err) {
+			throw `clearLocal fail-${err}`
 		}
 	}
 }

@@ -1,5 +1,4 @@
 <template>
-	<div class="bg"></div>
 	<form method="post" class="option">
 		<div class="logo"></div>
 		<div class="form">

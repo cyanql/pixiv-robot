@@ -1,5 +1,4 @@
-import app from 'app'
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 import UserInfo from './models/UserInfo'
 import Pixiv from './models/Pixiv'
 import Picture from './models/Picture'
@@ -24,7 +23,11 @@ const userinfo = new UserInfo({
 /**
  * 从本地读取信息并装载
  */
-userinfo.loadFromLocal()
+try {
+	userinfo.loadFromLocal()
+} catch (err) {
+	console.error(err)
+}
 
 /**
  * 检查cookie是否存在
@@ -38,11 +41,18 @@ ipcMain.on('check-cookie-m', (e) => {
 })
 
 ipcMain.on('get-userinfo-m', (e) => {
-	console.log(userinfo.toJS())
+	console.log('userinfo: ', userinfo.toJS())
 	e.sender.send('get-userinfo-r', userinfo.toJS())
 })
 
-
+ipcMain.on('logout-m', (e) => {
+	try {
+		userinfo.clearLocal()
+	} catch(err) {
+		e.sender.send('logout-r', err)
+	}
+	e.sender.send('logout-r')
+})
 /**
  * 登录
  * @param  {[string]} 'login-m' 监听事件
@@ -77,7 +87,12 @@ ipcMain.on('set-option-m', (e, option) => {
 	Object.keys(option).forEach(key => {
 		userinfo.update(key, option[key])
 	})
-	userinfo.saveToLocal()
+	try {
+		userinfo.saveToLocal()
+	} catch(err) {
+		e.sender.send('set-option-r', err)
+	}
+	e.sender.send('set-option-r')
 })
 
 
