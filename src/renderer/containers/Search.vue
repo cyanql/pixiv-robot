@@ -2,7 +2,7 @@
 	<div class="search clear-fix">
 		<div class="btn-group clear-fix">
 			<a class="btn" @click="searchAsync(authorId)">查找</a>
-			<a class="btn" @click="downloadPicListAsync(authorId, picList)">下载</a>
+			<a class="btn" @click="downloadPicListAsync(authorId, handledPicList)">下载</a>
 		</div>
 		<div class="content clear-fix">
 			<label>作者ID</label>
@@ -14,14 +14,14 @@
 	</div>
 	<div class="container">
 		<div
-			v-for="picItem in picList"
+			v-for="picItem in handledPicList"
 			:class="picItem.selected ? 'item-selected' : 'item'"
 			:style="{width: picItem.width * 200 / picItem.height + 'px', flexGrow: picItem.width * 200 / picItem.height}"
 			@click="selectPicItem($index)"
 			:track-by="$index"
 			>
 			<div :style="{paddingBottom: picItem.height / picItem.width * 100 + '%'}"></div>
-			<img :src="picItem.src" :alt="picItem.name" @load="changePicItemStyle($event, $index)">
+			<img :src="picItem.src" :alt="picItem.name" @load="imgOnLoad($event, $index)" @error="imgOnError($event)">
 			<div class="progress-box">
 				<ring-alt :style="{display: picItem.progress > 0 ? 'block' : 'none'}" class="progress-main" :radius="30" :progress="picItem.progress" color2="rgba(0,0,0,.25)"></ring-alt>
 			</div>
@@ -46,6 +46,34 @@ export default {
 			picList: state => state.picList
 		},
 		actions
+	},
+	computed: {
+		handledPicList() {
+			return this.picList.map((v) => {
+				v.src = v.src.replace(/150x150/, '400x400')
+				return v
+			})
+		}
+	},
+	methods: {
+		imgOnLoad(e, index) {
+			console.log('onload')
+			const self = e.path[0]
+			this.handledPicList[index].width = self.naturalWidth
+			this.handledPicList[index].height = self.naturalHeight
+		},
+		imgOnError(e) {
+			console.log('onerror')
+			const self = e.path[0]
+			//读取次数不存在时设为1
+			self._loadTimes = self._loadTimes || 1
+
+			//最大读取5次
+			if (self._loadTimes < 3) {
+				self.src = self.src
+				self._loadTimes++
+			}
+		}
 	},
 	components: {
 		RingAlt,

@@ -1,6 +1,6 @@
 {
   "name": "PixivRobot",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "./main/index.js",
   "scripts": {
 	"prod": "npm run build && npm run pack:osx",
