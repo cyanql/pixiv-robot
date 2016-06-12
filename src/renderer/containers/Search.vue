@@ -1,15 +1,10 @@
 <template>
-	<div class="search clear-fix">
-		<div class="btn-group clear-fix">
-			<a class="btn" @click="searchAsync(authorId)">查找</a>
-			<a class="btn" @click="downloadPicListAsync(authorId, handledPicList)">下载</a>
-		</div>
-		<div class="content clear-fix">
-			<label>作者ID</label>
-			<input
-				@input="changeAuthorId"
-				:value="authorId"
-			>
+	<div class="search">
+		<ui-textbox class="search-content" name="authorId" type="text" placeholder="ID/URL" @input="changeSearchContent" :value="authorId" :validation-messages="validationMessages" :validation-rules="validationRules"></ui-textbox>
+		<div class="btn-group search-btn-group">
+			<ui-button class="btn search-btn" text="查找" @click="searchAsync(authorId)"></ui-button>
+			<ui-button class="btn search-btn" text="全选"></ui-button>
+			<ui-button class="btn search-btn" text="下载" @click="downloadPicListAsync(authorId, handledPicList)"></ui-button>
 		</div>
 	</div>
 	<div class="container">
@@ -55,7 +50,22 @@ export default {
 			})
 		}
 	},
+	data() {
+		return {
+			validationMessages: {regex: '［格式］数字: 123456(作者id) 或 网址: http://www.pixiv.net/member_illust.php?id=123456(作者id)'},
+			validationRules: 'regex:/^((\\w{4,5}:\\/\\/)?www\\.pixiv\\.net\\/member_illust\\.php\\?id=)?\\d+(&.*)?$/'
+		}
+	},
 	methods: {
+		changeSearchContent(e) {
+			//正则验证输入内容是否符合要求，并获取authorId，否则将store中的authorId置空
+			const result = /^(?:(?:\w{4,5}:\/\/)?www\.pixiv\.net\/member_illust\.php\?id=)?(\d+(?:&.*)?)$/.exec(e.target.value)
+			console.log(result)
+			if (result)
+				this.changeAuthorId(result[1])
+			else
+				this.changeAuthorId('')
+		},
 		imgOnLoad(e, index) {
 			console.log('onload')
 			const self = e.path[0]
@@ -92,51 +102,28 @@ export default {
 @label-width: 100px;
 
 .search {
-	background-color: @main-color;
+	min-width: 800px;
+	text-align: center;
+	padding: 20px 0;
 
-	& > .content {
-		float: right;
-		width: 300px;
-		padding-left: @label-width;
-
-		& > label,
-		& > input {
-			float: left;
-			line-height: @input-height;
-			color: white;
-		}
-
-		& > label {
-			width: @label-width;
-			margin-left: -@label-width;
-			text-align: center;
-		}
-
-		& > input {
-			background-color: darken(@main-color, 2%);
-			width: 100%;
-			text-indent: 10px;
-			font-size: 14px;
-			line-height: @input-height * .6;
-			margin: @input-height * .2 0;
-			border-radius: @input-height * .5;
-		}
+	&-btn-group,
+	&-btn {
+		vertical-align: top;
 	}
 
-	& > .btn-group {
-		float: right;
-		font-size: 0;
+	&-btn {
+		width: 60px;
+		margin: 0;
+	}
 
-		& > .btn {
-			float: left;
-			width: @label-width;
-			height: @input-height;
-			color: white;
-
-			&:active {
-				background-color: darken(@main-color, 2%);
-			}
-		}
+	&-content {
+		display: inline-block;
+		min-width: 400px;
+		max-width: 800px;
+		width: 60%;
+		margin: 0 20px;
+		text-align: left;
+		white-space: nowrap;
 	}
 }
 .container {

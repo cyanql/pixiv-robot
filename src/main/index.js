@@ -20,7 +20,7 @@ app.on('ready', () => {
 		width: 1200,
 		height: 800,
 		movable: true,
-		title: 'PixivBot',
+		title: 'PixivRobot',
 		titleBarStyle: 'hidden-inset',
 		webPreferences: {
 			webSecurity: false

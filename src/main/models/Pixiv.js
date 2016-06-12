@@ -99,6 +99,7 @@ class Pixiv {
 			return res
 		} catch (err) {
 			throw `登陆失败--${err}`
+
 		}
 	}
 	/**

@@ -58,10 +58,6 @@ const baseMutations = {
 	[types.SET_OPTION] (state) {
 
 	},
-	[types.CHANGE_PICITEM_STYLE] (state, width, height, index) {
-		state.picList[index].width = width
-		state.picList[index].height = height
-	},
 	[types.ADD_SNACK] (state, option) {
 		//option为新添加，可以不解构也能触发响应
 		state.snack = Object.assign({}, state.snack, option)

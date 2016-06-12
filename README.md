@@ -1,4 +1,6 @@
 # pixiv-robot
+> 原意起名为pixiv－bot，无奈已有该项目
+
 * Library: `electron` + `vue` + `vue-router` + `vuex`
 * Builder: `webpack` + `babel`
 * Language: `es2015` + `stage-0`(async/await、spread)

@@ -42,9 +42,6 @@ router.map({
 
 router.beforeEach(({to, next, redirect}) => {
 	if (to.validation) {
-		to.router.app.addSnack({
-			message: '登录验证'
-		})
 		return Promise.resolve(to.router.app.logined)
 	} else {
 		next()

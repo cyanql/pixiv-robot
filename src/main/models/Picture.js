@@ -91,7 +91,7 @@ class Picture {
 	}
 	/**
 	 * 下载进度
-	 * @param  {String} per '10%'
+	 * @param  {String} per '0.1'
 	 */
 	onProgress(per) {
 		process.stdout.clearLine(1)

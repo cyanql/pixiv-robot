@@ -1,12 +1,11 @@
 <template>
 	<div class="option">
-		<div class="logo"></div>
+		<logo class="logo" color="#2c6"></logo>
 		<div class="form">
-			<input class="user" type="text" @input="changeUserName" :value="info.username" placeholder="username">
-			<input class="pass" type="password" @input="changePassWord" :value="info.password" placeholder="password">
-			<input type="text" @input="changeProxy" :value="info.proxy" placeholder="代理（选填）">
+			<ui-textbox name="user" icon="person" type="text" label="邮箱(pixiv账号)" @input="changeUserName" :value="info.username" :validation-messages="{required: '请输入内容', email: '请输入符合邮箱格式的内容'}" validation-rules="required|email"></ui-textbox>
+			<ui-textbox name="user" icon="lock" type="password" label="密码" @input="changePassWord" :value="info.password" :validation-messages="{required: '请输入内容'}" validation-rules="required"></ui-textbox>
+			<ui-button class="submit" @click="loginAsync(info)">登录</ui-button>
 		</div>
-		<a class="btn submit" @click="loginAsync(info)">登录</a>
 	</div>
 </template>
 
@@ -16,7 +15,7 @@ import store from 'renderer/vuex'
 import * as actions from 'renderer/vuex/actions'
 import Svg from 'renderer/components/Svg'
 //迷之不支持解构
-const Ripple = Svg.Ripple
+const Logo = Svg.Logo
 
 export default {
 	store,
@@ -28,30 +27,20 @@ export default {
 		actions
 	},
 	components: {
-		Ripple
-	},
+		Logo
+	}
+	/*
 	route: {
 		activate: function (transition) {
 			console.log('hook-example activated!')
 			transition.next()
 		}
-	},
-	ready() {
-		// const webview = document.getElementById('webview')
-		// webview.addEventListener('dom-ready', () => {
-		// 	const ctx = webview.getWebContents()
-		// 	/*ctx.session.setProxy({
-		// 		pacScript: 'http://127.0.0.1:16823/proxy_on.pac'
-		// 	}, (result) => {
-		// 		console.log(`proxy--finish${result}`)
-		// 	})*/
-		// 	ctx.session.cookies.get({url: 'https://www.pixiv.net', name: 'PHPSESSID'}, (err, cookies) => {
-		// 	    if (err) throw err;
-		// 		const result = cookies.find(v => /^\d+_[a-z0-9]/.test(v.value))
-		// 		const cookie = result && result.name + '=' + result.value
-		// 		cookie && !this.login(cookie) && this.$router.go('search')
-		// 	})
-		// })
 	}
+	*/
 }
 </script>
+<style lang="less">
+.logo {
+	margin:30px 20px;
+}
+</style>

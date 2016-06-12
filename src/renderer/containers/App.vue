@@ -2,11 +2,12 @@
 	<ui-toolbar type="default" text-color="black" :title="title" :loading="loading" hide-nav-icon show-brand>
 		<div slot="actions">
 			<ui-icon-button type="clear" color="black" icon="search" @click="switchPage('search')" :disabled="!logined"></ui-icon-button>
-			<ui-icon-button type="clear" color="black" icon="account_circle" :menu-options="menu" @menu-option-selected="menuOptionSelected" dropdown-position="bottom right" has-dropdown-menu show-menu-icons></ui-icon-button>
+			<ui-icon-button type="clear" color="black" icon="account_circle" :menu-options="menu" @menu-option-selected="menuOptionSelected" dropdown-position="bottom right" open-dropdown-on="hover" has-dropdown-menu show-menu-icons></ui-icon-button>
 			<ui-icon-button type="clear" color="black" icon="settings" @click="switchPage('setting')"></ui-icon-button>
 		</div>
 	</ui-toolbar>
 	<router-view></router-view>
+	<ui-snackbar-container :position="position" :queue-snackbars="queueSnackbars"></ui-snackbar-container>
 </template>
 
 <script>
@@ -25,7 +26,6 @@ export default {
 	},
 	computed: {
 		menu() {
-			console.log(this.logined)
 			return [{
 				route: 'login',
 				icon: 'compare_arrows',
@@ -64,7 +64,6 @@ export default {
 			}
 		})
 		this.$watch('snack', (snack) => {
-			console.log(snack)
 			this.$broadcast('ui-snackbar::create', snack)
 		})
 	},
@@ -103,9 +102,12 @@ body,select,dd,dl,dt,li,ol,ul,span,div,form,h1,h2,h3,h4,h5,h6,hr,p,a,button,inpu
 	padding: 0;
 }
 body {
-	min-width: 600px;
-	background-image: -webkit-radial-gradient(circle,#46c463 0%,#2db861 100%);
-	background-image:         radial-gradient(circle,#46c463 0%,#2db861 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#46c463', endColorstr='#2db861',GradientType=0 );
+	min-width: 800px;
+	// background-image: -webkit-radial-gradient(circle,#46c463 0%,#2db861 100%);
+	// background-image:         radial-gradient(circle,#46c463 0%,#2db861 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#46c463', endColorstr='#2db861',GradientType=0 );
+}
+html {
+	height: 100%;
 }
 li {list-style: none;}
 
@@ -124,28 +126,20 @@ input[type="file"] {
 	width: @width;
 	margin: 100px auto 0 auto;
 
-	& > .logo {
-		height: @logo-height;
-		margin: 0 auto;
-		background: @img-logo center no-repeat;
-	}
-
-	& > .form > input {
+	& > .form > .submit {
 		width: 100%;
 		height: @input-height;
-		text-indent: 50px;
-		color: @font-normal-color;
-	}
-
-	& .user {
-		background: white @img-user 20px center no-repeat;
-	}
-
-	& .pass {
-		background: white @img-user 20px center no-repeat;
 	}
 }
 
+.btn-group {
+	.clear-fix;
+	display: inline-block;
+
+	& > .btn {
+		float: left;
+	}
+}
 .btn {
 	display: inline-block;
 	height: @input-height;

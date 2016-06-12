@@ -66,15 +66,14 @@ ipcMain.on('login-m', async (e, info) => {
 		//获取cookie，并检验(密码)
 		const cookie = res.headers.getAll('set-cookie').find(v => /PHPSESSID=\d+_[a-z0-9]+/.test(v))
 		if (!cookie)
-			return e.sender.send('login-r', false)
+			return e.sender.send('login-r', false, '登录失败')
 		//写入cookie
 		userinfo.update('cookie', cookie)
 		userinfo.saveToLocal()
 
 		e.sender.send('login-r', true)
 	} catch (err) {
-		e.sender.send('login-r', false)
-		console.error(err)
+		e.sender.send('login-r', false, err)
 	}
 })
 
